@@ -1,0 +1,13 @@
+# Web / Node
+**/node_modules/
+**/.env
+
+# Python / ML (Por si usas entornos virtuales en las otras carpetas)
+**/venv/
+**/.venv/
+**/.ipynb_checkpoints/
+**/__pycache__/
+
+# Sistema
+.DS_Store
+Thumbs.db
