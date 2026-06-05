@@ -1,0 +1,19 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "concurrently \"cd backend && pnpm dev \" \"cd frontend && pnpm dev",
+    "dev": "",
+    "test:backend": "cd backend && pnpm dev",
+    "test:frontend": "cd frontend && pnpm dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.26.1",
+  "dependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
