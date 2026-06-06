@@ -10,7 +10,7 @@
     "test:frontend": "cd frontend && pnpm dev"
   },
   "keywords": [],
-  "author": "",
+  "author": "nicolas azo",
   "license": "ISC",
   "packageManager": "pnpm@10.26.1",
   "dependencies": {

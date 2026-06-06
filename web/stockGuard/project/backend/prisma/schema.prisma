@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Rol {
+  ADMIN
+  ALMACENERO
+}
+
+enum TypeVoucher {
+  BOLETA
+  FACTURA
+}
+
+enum Status {
+  CANCELADO
+  EN_PROCESO
+  ANULADO
+}
+
+model Users {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  rol       Rol      @default(ALMACENERO)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sells Sells[]
+}
+
+model Products {
+  id              String   @id @default(uuid())
+  name            String
+  bars_code       String   @unique
+  lote            String?
+  expiration_date DateTime
+  unity_price     Decimal  @db.Decimal(10, 2)
+  wholesale_price Decimal  @db.Decimal(10, 2)
+  current_stock   Int      @default(5)
+  minimun_stock   Int      @default(5)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  sellDetails SellDetails[]
+}
+
+model Clients {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?  @unique
+  dni       String?  @unique
+  ruc       String?
+  cellPhone String?  @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sells Sells[]
+}
+
+model Sells {
+  id        String      @id @default(uuid())
+  userId    String
+  user      Users       @relation(fields: [userId], references: [id])
+  clientId  String
+  client    Clients     @relation(fields: [clientId], references: [id])
+  voucher   TypeVoucher @default(BOLETA)
+  status    Status      @default(EN_PROCESO)
+  createdAt DateTime    @default(now())
+
+  details SellDetails[]
+}
+
+model SellDetails {
+  id           String   @id @default(uuid())
+  sellId       String
+  sell         Sells    @relation(fields: [sellId], references: [id])
+  productId    String
+  product      Products @relation(fields: [productId], references: [id])
+  quantity     Int
+  actual_price Decimal  @db.Decimal(10, 2)
+  subTotal     Decimal  @db.Decimal(10, 2)
+  createdAt    DateTime @default(now())
+}

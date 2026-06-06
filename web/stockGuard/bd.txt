@@ -1,0 +1,11 @@
+enums: 
+	TypeUser = admin o almacenero;
+	TypeVoucher = boleta o factura;
+	Status = CANCELADO,EN PROCESO,ANULADA;
+	
+models:
+	user: {name, email, password, rol, createdAt, updatedAt}
+	products: {name, bars_code, lote, expiration_date, unity_price, wholesale_price, current_stock, minimun_stock, active, createdAt, updatedAt}
+	clients: {name, email, dni, ruc, cellphone, createdAt, updatedAt}
+	sells: {user, client, vouchertype, status, createdAt}
+	selldetails: {sell, product, quantity, unityPrice, sub_total}

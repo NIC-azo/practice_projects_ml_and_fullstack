@@ -1,6 +1,7 @@
 # Web / Node
 **/node_modules/
 **/.env
+**/prisma/seed.ts
 
 # Python / ML (Por si usas entornos virtuales en las otras carpetas)
 **/venv/
