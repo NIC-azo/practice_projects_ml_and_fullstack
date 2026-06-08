@@ -41,18 +41,20 @@ model Users {
 }
 
 model Products {
-  id              String   @id @default(uuid())
-  name            String
-  bars_code       String   @unique
-  lote            String?
-  expiration_date DateTime
-  unity_price     Decimal  @db.Decimal(10, 2)
-  wholesale_price Decimal  @db.Decimal(10, 2)
-  current_stock   Int      @default(5)
-  minimun_stock   Int      @default(5)
-  active          Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                      String   @id @default(uuid())
+  name                    String
+  bars_code               String   @unique
+  lote                    String?
+  expiration_date         DateTime
+  unity_price             Decimal  @db.Decimal(10, 2)
+  limit_minor_adquirition Int      @default(5)
+  minorsale_price         Decimal  @db.Decimal(10, 2)
+  wholesale_price         Decimal  @db.Decimal(10, 2)
+  current_stock           Int      @default(5)
+  minimun_stock           Int      @default(5)
+  active                  Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
   sellDetails SellDetails[]
 }
@@ -79,6 +81,7 @@ model Sells {
   client    Clients     @relation(fields: [clientId], references: [id])
   voucher   TypeVoucher @default(BOLETA)
   status    Status      @default(EN_PROCESO)
+  total     Decimal     @db.Decimal(10, 2)
   createdAt DateTime    @default(now())
 
   details SellDetails[]

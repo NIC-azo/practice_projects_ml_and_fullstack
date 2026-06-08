@@ -49,7 +49,8 @@
       "@routes/*": ["src/routes/*"],
       "@middlewares/*": ["src/middlewares/*"],
       "@services/*": ["src/services/*"],
-      "@lib/*": ["src/lib/*"]
+      "@lib/*": ["src/lib/*"],
+      "@modelTypes/*": ["src/types/*"],
     },
   },
   "include": [
