@@ -1,9 +1,9 @@
-import type { JwtPayloadStockGuard } from "@modelTypes/express.d.ts";
+import type { JwtPayload } from "@modelTypes/bd.types.ts";
 
 declare global {
     namespace Express {
         interface Request {
-            user?: JwtPayloadStockGuard;
+            user?: JwtPayload;
         }
     }
 }

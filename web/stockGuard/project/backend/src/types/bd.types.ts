@@ -1,7 +1,7 @@
-export type Rol = "ADMIN" | "ALMACENERO"
-export type TypeVoucher = "BOLETA" | "FACTURA"
-export type Status = "CANCELADO" 
-| "EN_PROCESO" | "ANULADO";
+export type Rol = 'ADMIN' | 'ALMACENERO'
+export type TypeVoucher = 'BOLETA' | 'FACTURA'
+export type Status = 'CANCELADO' 
+| 'EN_PROCESO' | 'ANULADO';
 
 export interface modelUser {
     name: string;
@@ -37,7 +37,16 @@ export interface InitSell {
     }>
 }
 
-export interface JwtPayloadStockGuard {
+export interface JwtPayload {
     userId: string;
     rol: Rol;
+}
+
+export interface AuthResponse {
+    token: string;
+    message: string;
+    user: {
+        userId: string;
+        rol: Rol;
+    }
 }

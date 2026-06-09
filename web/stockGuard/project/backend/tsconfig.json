@@ -44,6 +44,7 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
+      "@/*": ["src/*"],
       "@controllers/*": ["src/controllers/*"],
       "@models/*" : ["src/models/*"],
       "@routes/*": ["src/routes/*"],
@@ -51,6 +52,7 @@
       "@services/*": ["src/services/*"],
       "@lib/*": ["src/lib/*"],
       "@modelTypes/*": ["src/types/*"],
+      "@utils/*" : ["src/utils/*"],
     },
   },
   "include": [

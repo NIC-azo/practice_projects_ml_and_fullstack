@@ -1,6 +1,6 @@
 import prismaInstance from "@lib/connection.js";
-import type { InitSell } from "@modelTypes/bd.types.js";
-
+import type { InitSell, Status } from "@modelTypes/bd.types.js";
+import jwt from "jsonwebtoken"
 class SellsService {
 
     initSell = async (userId: string, request: InitSell) => {
@@ -47,7 +47,7 @@ class SellsService {
             return { success: false, errors };
         }
         const creatingDetails = prismaInstance.$transaction(async (tx) => {
-            const newSale = tx.sells.create({
+            const newSale = await tx.sells.create({
                 data: {
                     userId: userId,
                     clientId: clientId,
@@ -64,8 +64,70 @@ class SellsService {
                 },
                 include: {
                     details: true,
-                }
-            })
+                },
+            });
+
+            for (const  items of itemsSelected) {
+                await tx.products.update({
+                    where: {
+                        id: items.productId,
+                    },
+                    data: {
+                        current_stock: {
+                            decrement: items.quantity,
+                        },
+                    },
+
+                });
+            };
+            return newSale;
         });
-    }
+        return {data: creatingDetails}
+    };
+
+    updateSellStatus = async (idSell: string, status: Status) => {
+        let errors: string[] = [];
+        const sellAndDetailsFound = await prismaInstance.sells.findFirst({
+            where: {
+                id: idSell,
+            },
+            include: {
+                details: true,
+            }
+        });
+        if (sellAndDetailsFound === undefined || !sellAndDetailsFound) {
+            errors.push("no se encontro la venta, consulte con soporte tecnico");
+        }
+        if (sellAndDetailsFound?.status === "ANULADO") {
+            errors.push("la venta se encuentra anulada");
+        }
+        if (errors.length > 0) {
+            return {success: false, errors}
+        }
+        const proccedOperations = await prismaInstance.$transaction(async (tx) => {
+            if (status === "ANULADO") {
+                for (const detail of sellAndDetailsFound!.details) {
+                    await tx.products.update({
+                        where: {
+                            id: detail.productId,
+                        },
+                        data: {
+                            current_stock: {
+                                increment: detail.quantity,
+                            }
+                        },
+                    });
+                };
+            };
+            return await tx.sells.update({
+                where: {
+                    id: idSell,
+                },
+                data: {
+                    status: status,
+                },
+            });
+        });
+        return {success: true, data: proccedOperations};
+    };
 }
