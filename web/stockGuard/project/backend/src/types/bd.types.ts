@@ -43,8 +43,6 @@ export interface JwtPayload {
 }
 
 export interface AuthResponse {
-    token: string;
-    message: string;
     user: {
         userId: string;
         rol: Rol;

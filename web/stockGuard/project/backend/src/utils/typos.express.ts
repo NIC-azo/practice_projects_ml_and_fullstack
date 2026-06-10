@@ -2,8 +2,8 @@ import type { AuthResponse } from "@modelTypes/bd.types.js";
 import type { Response } from "express";
 
 export class ApiResponse {
-    static auth(res: Response, message: string, data: AuthResponse, status = 200) {
-        return res.status(status).json({data, message});
+    static auth(res: Response, token: string, message: string, user: AuthResponse, status = 200) {
+        return res.status(status).json({token, message, user});
     };
     static returnResults<T>(res: Response, data: T, status = 200) {
         return res.status(status).json({data})

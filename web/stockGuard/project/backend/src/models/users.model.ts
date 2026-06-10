@@ -2,31 +2,38 @@ import prismaInstance from "@lib/connection.js";
 import type { modelUser } from "@modelTypes/bd.types.js";
 
 class UsersModel {
-    getUsersDynamicly = async (searchTerm?: string) => {
+    returnUsers = async () => {
         return await prismaInstance.users.findMany({
             where: {
                 active: true,
-                ...(searchTerm && {
-                    OR: [
-                        {email: {contains: searchTerm, mode: "insensitive"}},
-                    ],
-                }),
             },
-            select:{
+            select: {
                 id: true,
                 name: true,
                 email: true,
-                password: true,
-                active: true,
+                rol: true,
                 createdAt: true,
                 updatedAt: true,
             },
             orderBy: {
-                createdAt: "asc",
-            }
+                createdAt: "asc"
+            },
         });
     };
-
+    returnUserByEmail = async (email: string) => {
+        return await prismaInstance.users.findFirst({
+            where: {
+                email: email,
+                active: true,
+            },
+            select: {
+                id: true,
+                name: true,
+                rol: true,
+                password: true,
+            },
+        });
+    };
     createUser = async (user: modelUser) => {
         return await prismaInstance.users.create({
             data: user,
