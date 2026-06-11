@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+import { router } from "@/routes/index.routes.js";
 import "dotenv/config"
 
 const environment = process.env["NODE_ENV"] || "";
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true,
 }));
+
+app.use('/api', router);
 
 const DISCERN_PORT = environment === "dev" 
     ? process.env["LOCAL_PORT"] || "" 

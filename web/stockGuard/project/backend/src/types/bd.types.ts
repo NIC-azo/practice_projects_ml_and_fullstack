@@ -23,9 +23,11 @@ export interface modelProducts {
     lote?: string;
     expiration_date: Date;
     unity_price: number;
+    limit_minor_adquirition?: number;
+    minorsale_price: number;
     wholesale_price: number;
-    current_stock: number;
-    minimun_stock: number;
+    current_stock?: number;
+    minimun_stock?: number;
 }
 
 export interface InitSell {
