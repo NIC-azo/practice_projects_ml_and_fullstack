@@ -5,9 +5,9 @@ export type Status = 'CANCELADO'
 
 export interface modelUser {
     name: string;
-    email    : string
-    password : string     
-    Rol      : Rol
+    email: string
+    password: string     
+    Rol?: Rol
 }
 export interface modelClients {
     name : string;
