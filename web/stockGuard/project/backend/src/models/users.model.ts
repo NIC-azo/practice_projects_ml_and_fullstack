@@ -29,6 +29,7 @@ class UsersModel {
             select: {
                 id: true,
                 name: true,
+                email: true,
                 rol: true,
                 password: true,
             },

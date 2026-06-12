@@ -22,6 +22,64 @@ class UsersController {
         if (String(restOfBody.email!)){
             const userLocated = await usersModel.returnUserByEmail(String(restOfBody.email!));
             
+            if (userLocated?.email === String(restOfBody.email!)){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un usuario con el mismo email ingresado");
+            }
         }
+        const passwordHashed = await bcrypt.hash(restOfBody.password!, Number(process.env["HASH_SALTS"]!));
+        const userConverted: modelUser = {
+            ...restOfBody,
+            ...({
+                password: passwordHashed,
+            }),
+        };
+        const userCreated = await usersModel.createUser(userConverted);
+        if (userCreated === undefined || !userConverted) {
+            return ApiResponse.errorOperations(res, "error interno al crear al usuario", 500);
+        }
+        return ApiResponse.operations(res, "usuario creado correctamente", 201);
+    });
+    static updateUser = errorHandler(async (req: Request, res: Response) => {
+        const {id_user} = req.params;
+        const {...restOfBody} = req.body;
+        if (Object.keys(restOfBody).length <= 0 || String(restOfBody.name!) === undefined) {
+            return ApiResponse.errorOperations(res, "se requiere por lo menos 1 campo a actualizar")
+        }
+        if (String(id_user!) === undefined){
+            return ApiResponse.errorOperations(res, "se requiere identificacion del usuario");
+        }
+        if (String(restOfBody.email!)) {
+            const userFound = await usersModel.returnUserByEmail(String(restOfBody.email!));
+            if (userFound?.email === String(restOfBody.email!) && userFound.id !== String(id_user!)){
+                return ApiResponse.errorOperations(res, "ya existe un usuario con el mismo email ingresado")
+            }
+        }
+        const userConverted: modelUser = {
+            ...restOfBody,
+            ...(
+                restOfBody.password && {
+                    password: await bcrypt.hash(String(restOfBody.password!), Number(process.env["HASH_SALTS"]!))
+                }
+            ),
+        };
+        const userUpdated = await usersModel.updateUser(String(id_user!), userConverted);
+        if (userUpdated === undefined || !userUpdated.id) {
+            return ApiResponse.errorOperations(res, "error al actualizar al usuario", 500);
+        }
+        return ApiResponse.operations(res, "usuario actualizado correctamente");
+    });
+    static deleteUser = errorHandler(async (req: Request, res: Response) => {
+        const {id_user} = req.params;
+        if (String(id_user!) === undefined){
+            return ApiResponse.errorOperations(res, "se requiere identificacion del usuario");
+        }
+        const userDeleted = await usersModel.deleteUser(String(id_user!));
+        if (userDeleted === undefined) {
+            return ApiResponse.errorOperations(res, "error interno al eliminar usuario")
+        }
+        return ApiResponse.operations(res, "usuario eliminado correctamente")
     });
 }
+
+export default UsersController;
