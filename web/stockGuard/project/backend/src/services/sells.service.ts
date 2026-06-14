@@ -131,3 +131,5 @@ class SellsService {
         return {success: true, data: proccedOperations};
     };
 }
+
+export default new SellsService;

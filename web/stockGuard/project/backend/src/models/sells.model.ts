@@ -34,3 +34,5 @@ class SellsModel {
         });
     };
 }
+
+export default new SellsModel();

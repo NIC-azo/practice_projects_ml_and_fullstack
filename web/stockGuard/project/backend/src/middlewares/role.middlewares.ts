@@ -10,5 +10,5 @@ export const roleMiddleware = (...rolesAllowed: Rol[]) => {
                 "Usuario no authorizado para realizar esta operacion", 401);
         }
         next();
-    }
-}
+    };
+};

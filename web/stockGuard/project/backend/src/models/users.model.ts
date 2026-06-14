@@ -1,5 +1,5 @@
 import prismaInstance from "@lib/connection.js";
-import type { modelUser } from "@modelTypes/bd.types.js";
+import type { modelUser, updateUser } from "@modelTypes/bd.types.js";
 
 class UsersModel {
     returnUsers = async () => {
@@ -44,7 +44,7 @@ class UsersModel {
         });
     };
 
-    updateUser = async (id: string, user: modelUser) => {
+    updateUser = async (id: string, user: updateUser) => {
         return await prismaInstance.users.update({
             where: {
                 id: id,

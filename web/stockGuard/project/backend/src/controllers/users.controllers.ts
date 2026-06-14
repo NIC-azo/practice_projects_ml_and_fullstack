@@ -3,7 +3,7 @@ import bcrypt from "bcrypt"
 import { errorHandler } from "@/middlewares/errors.middlewares.js";
 import type { Request, Response } from "express";
 import { ApiResponse } from "@/utils/typos.express.js";
-import type { modelUser } from "@modelTypes/bd.types.js";
+import type { modelUser, updateUser } from "@modelTypes/bd.types.js";
 
 class UsersController {
     static getUsers = errorHandler(async (req: Request, res: Response) => {
@@ -55,7 +55,7 @@ class UsersController {
                 return ApiResponse.errorOperations(res, "ya existe un usuario con el mismo email ingresado")
             }
         }
-        const userConverted: modelUser = {
+        const userConverted: updateUser = {
             ...restOfBody,
             ...(
                 restOfBody.password && {

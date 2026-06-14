@@ -1,23 +1,28 @@
 import prismaInstance from "@lib/connection.js";
-import type { modelProducts } from "@modelTypes/bd.types.js";
+import type { modelProducts, updateProducts } from "@modelTypes/bd.types.js";
 
 class ProductsModel {
-    getProductsDinamicly = async (searchTerm? : string) => {
+    getProductsDinamicly = async () => {
         return await prismaInstance.products.findMany({
             where: {
                 active: true,
-                ...(searchTerm && {
-                    OR: [
-                        {name: {contains: searchTerm, mode: "insensitive"}},
-                        {bars_code: {contains: searchTerm, mode: "insensitive"}},
-                    ],
-                }),
             },
             orderBy:{
                 createdAt: "asc",
             },
         });
     };
+    getProductForController = async (searchTerm : string) => {
+        return await prismaInstance.products.findFirst({
+            where: {
+                active: true,
+                bars_code: searchTerm,
+            },
+            select: {
+                id: true,
+            }
+        })
+    }
     createProduct = async(product: modelProducts) => {
         return await prismaInstance.products.create({
             data: product,
@@ -26,7 +31,7 @@ class ProductsModel {
             },
         });
     };
-    updateProduct = async(id: string, product: modelProducts) => {
+    updateProduct = async(id: string, product: updateProducts) => {
         return await prismaInstance.products.update({
             where: {
                 id: id,
