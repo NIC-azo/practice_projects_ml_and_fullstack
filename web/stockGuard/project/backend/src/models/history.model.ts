@@ -43,3 +43,5 @@ class HistoryModel {
         });
     }
 }
+
+export default new HistoryModel();

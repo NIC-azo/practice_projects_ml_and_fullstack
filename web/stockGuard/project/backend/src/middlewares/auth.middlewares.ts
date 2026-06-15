@@ -7,7 +7,7 @@ import "dotenv/config"
 
 export const authMiddleware = errorHandler(async(req: Request, res: Response, next: NextFunction) => {
     const headerAuth = req.headers.authorization;
-    if (!headerAuth?.includes("Bearer: ")){
+    if (!headerAuth?.includes("Bearer ")){
         return ApiResponse.errorOperations(res, "se requiere del token para iniciar sesion", 401);
     }
     const tokenGotten = headerAuth.split(" ")[1]!;

@@ -1,0 +1,184 @@
+BACKEND: [
+SERVER.TS: (import express from "express"
+import cors from "cors"
+import { router } from "@/routes/index.routes.js";
+import "dotenv/config"
+
+const environment = process.env["NODE_ENV"] || "";
+
+const app = express();
+
+app.use(cors({
+    credentials: true,
+    methods: ['GET','HEAD','PUT','PATCH','POST','DELETE'],
+    origin: process.env["FRONTEND_LOCAL"] || ""
+}));
+
+app.use(express.json());
+
+app.use(express.urlencoded({
+    extended: true,
+}));
+
+app.use('/api', router);
+
+const DISCERN_PORT = environment === "dev" 
+    ? process.env["LOCAL_PORT"] || "" 
+    : process.env["PORT"] || "";
+
+app.listen(DISCERN_PORT, () => {
+    console.log(`servidor funcionando en puerto: `, DISCERN_PORT);
+});) | AUTH.CONTROLLER: (import usersModel from "@/models/users.model.js";
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
+import { errorHandler } from "@/middlewares/errors.middlewares.js";
+import { ApiResponse } from "@/utils/typos.express.js";
+import type { Request, Response } from "express";
+import "dotenv/config"
+
+class AuthController {
+    static login = errorHandler(async (req: Request, res: Response) => {
+        const {email, password} = req.body;
+        if (String(password).length < 6 || String(password) === undefined) {
+            return ApiResponse.errorOperations(res, "credenciales incorrectas");
+        }
+        if (String(email).length < 0 || !String(email).includes("@")) {
+            return ApiResponse.errorOperations(res, "credenciales incorrectas");
+        }
+        const usersGotten = await usersModel.returnUserByEmail(String(email!));
+        if (usersGotten === undefined || !usersGotten) {
+            return ApiResponse.errorOperations(res, "error al procesar login", 500);
+        }
+        const userFound = await bcrypt.compare(String(password!), usersGotten.password);
+        if (!userFound) {
+            return ApiResponse.errorOperations(res, "credenciales incorrectas");
+        }
+        const genToken = jwt.sign(
+            {userId: usersGotten.id, rol: usersGotten.rol},
+            process.env["SESSION_SECRET"] || "",
+            {expiresIn: '24h'}
+        );
+        return ApiResponse.auth(res, genToken, "autenticado correctamente, dirigiendo ",
+            {user: {userId: usersGotten.id, rol: usersGotten.rol}}
+        )
+    });
+}
+
+export default AuthController;) | USER.CONTROLLER: (import usersModel from "@/models/users.model.js";
+import bcrypt from "bcrypt"
+import { errorHandler } from "@/middlewares/errors.middlewares.js";
+import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/typos.express.js";
+import type { modelUser, updateUser } from "@modelTypes/bd.types.js";
+
+class UsersController {
+    static getUsers = errorHandler(async (req: Request, res: Response) => {
+        const results = await usersModel.returnUsers();
+        if (results === undefined || !results) {
+            return ApiResponse.errorOperations(res, "error interno al obtener los usuarios", 500);
+        }
+        return ApiResponse.returnResults(res, results);
+    });
+    static createUser = errorHandler(async (req: Request, res: Response) => {
+        const {...restOfBody} = req.body;
+        if (Object.keys(restOfBody).length <= 0 || String(restOfBody.name!) === undefined) {
+            return ApiResponse.errorOperations(res, 
+                "se necesita por lo menos el nombre del usuario para proceder");
+        }
+        if (String(restOfBody.email!)){
+            const userLocated = await usersModel.returnUserByEmail(String(restOfBody.email!));
+            
+            if (userLocated?.email === String(restOfBody.email!)){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un usuario con el mismo email ingresado");
+            }
+        }
+        const passwordHashed = await bcrypt.hash(restOfBody.password!, Number(process.env["HASH_SALTS"]!));
+        const userConverted: modelUser = {
+            ...restOfBody,
+            ...({
+                password: passwordHashed,
+            }),
+        };
+        const userCreated = await usersModel.createUser(userConverted);
+        if (userCreated === undefined || !userConverted) {
+            return ApiResponse.errorOperations(res, "error interno al crear al usuario", 500);
+        }
+        return ApiResponse.operations(res, "usuario creado correctamente", 201);
+    });
+    static updateUser = errorHandler(async (req: Request, res: Response) => {
+        const {id_user} = req.params;
+        const {...restOfBody} = req.body;
+        if (Object.keys(restOfBody).length <= 0 || String(restOfBody.name!) === undefined) {
+            return ApiResponse.errorOperations(res, "se requiere por lo menos 1 campo a actualizar")
+        }
+        if (String(id_user!) === undefined){
+            return ApiResponse.errorOperations(res, "se requiere identificacion del usuario");
+        }
+        if (String(restOfBody.email!)) {
+            const userFound = await usersModel.returnUserByEmail(String(restOfBody.email!));
+            if (userFound?.email === String(restOfBody.email!) && userFound.id !== String(id_user!)){
+                return ApiResponse.errorOperations(res, "ya existe un usuario con el mismo email ingresado")
+            }
+        }
+        const userConverted: updateUser = {
+            ...restOfBody,
+            ...(
+                restOfBody.password && {
+                    password: await bcrypt.hash(String(restOfBody.password!), Number(process.env["HASH_SALTS"]!))
+                }
+            ),
+        };
+        const userUpdated = await usersModel.updateUser(String(id_user!), userConverted);
+        if (userUpdated === undefined || !userUpdated.id) {
+            return ApiResponse.errorOperations(res, "error al actualizar al usuario", 500);
+        }
+        return ApiResponse.operations(res, "usuario actualizado correctamente");
+    });
+    static deleteUser = errorHandler(async (req: Request, res: Response) => {
+        const {id_user} = req.params;
+        if (String(id_user!) === undefined){
+            return ApiResponse.errorOperations(res, "se requiere identificacion del usuario");
+        }
+        const userDeleted = await usersModel.deleteUser(String(id_user!));
+        if (userDeleted === undefined) {
+            return ApiResponse.errorOperations(res, "error interno al eliminar usuario")
+        }
+        return ApiResponse.operations(res, "usuario eliminado correctamente")
+    });
+}
+
+export default UsersController;) | AUTH.MIDDLEWARE: (import jwt from "jsonwebtoken"
+import type { Request, Response, NextFunction } from "express"
+import type { JwtPayload } from "@modelTypes/bd.types.js"
+import { errorHandler } from "@middlewares/errors.middlewares.js"
+import { ApiResponse } from "@utils/typos.express.js"
+import "dotenv/config"
+
+export const authMiddleware = errorHandler(async(req: Request, res: Response, next: NextFunction) => {
+    const headerAuth = req.headers.authorization;
+    if (!headerAuth?.includes("Bearer: ")){
+        return ApiResponse.errorOperations(res, "se requiere del token para iniciar sesion", 401);
+    }
+    const tokenGotten = headerAuth.split(" ")[1]!;
+    const payload = jwt.verify(
+        tokenGotten,
+        process.env["SESSION_SECRET"] || "",
+    ) as unknown as JwtPayload;
+    req.user = payload;
+    next();
+});) | ROLE.MIDDLEWARE: (import type { Rol } from "@modelTypes/bd.types.js";
+import type { Request, Response, NextFunction } from "express"
+import { ApiResponse } from "@/utils/typos.express.js";
+
+export const roleMiddleware = (...rolesAllowed: Rol[]) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const userRol = req.user?.rol;
+        if (!userRol || !rolesAllowed.includes(userRol)){
+            return ApiResponse.errorOperations(res, 
+                "Usuario no authorizado para realizar esta operacion", 401);
+        }
+        next();
+    };
+};)
+]
