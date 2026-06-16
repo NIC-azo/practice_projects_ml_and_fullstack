@@ -180,5 +180,459 @@ export const roleMiddleware = (...rolesAllowed: Rol[]) => {
         }
         next();
     };
-};)
+};) | CLIENTS.CONTROLLER (import type { Request, Response } from "express";
+import { errorHandler } from "@/middlewares/errors.middlewares.js";
+import { ApiResponse } from "@/utils/typos.express.js";
+import clientsModel from "@/models/clients.model.js";
+import type { modelClients, updateClients } from "@/types/bd.types.js";
+
+class ClientsController {
+    static getClients = errorHandler(async (req: Request, res: Response) => {
+        const results = await clientsModel.getClientsDinamicly();
+        if (!results || results === undefined) {
+            return ApiResponse.errorOperations(res, "error interno al obtener clientes", 500)
+        }
+        return ApiResponse.returnResults(res, results)
+    });
+    static createclients = errorHandler(async (req: Request, res: Response) => {
+        const {...restOfBody} = req.body;
+        if (Object.keys(restOfBody).length < 1 || restOfBody === undefined) {
+            return ApiResponse.errorOperations(res, 
+                "se necesita por lo menos el nombre del cliente para crearlo")
+        }
+        if (String(restOfBody.name)) {
+            const userFound = await clientsModel.getClientForController(String(restOfBody.name));
+            if (userFound) {
+                return ApiResponse.errorOperations(res, "ya existe un cliente creado con el mismo nombre");
+            }
+        }
+        if (String(restOfBody.email)) {
+            const userFound = await clientsModel.getClientForController(String(restOfBody.email));
+            if (userFound) {
+                return ApiResponse.errorOperations(res,
+                    "ya existe un cliente con el mismo email");
+            }
+        }
+        if (String(restOfBody.dni)){
+            const userFound = await clientsModel.getClientForController(String(restOfBody.dni));
+            if (userFound){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un cliente con el mismo dni")
+            }
+        }
+        if (String(restOfBody.ruc)){
+            const userFound = await clientsModel.getClientForController(String(restOfBody.ruc));
+            if (userFound){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un cliente con el mismo ruc")
+            }
+        }
+        if (String(restOfBody.cellPhone)){
+            const userFound = await clientsModel.getClientForController(String(restOfBody.cellPhone));
+            if (userFound){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un cliente con el mismo numero telefonico")
+            }
+        }
+        const clientConverted: modelClients = {
+            ...restOfBody
+        }
+        const clientCreated = await clientsModel.createClients(clientConverted);
+        if (clientCreated === undefined || !clientCreated){
+            return ApiResponse.errorOperations(res, 
+                "error interno al crear al cliente", 500)
+        }
+        return ApiResponse.operations(res, "cliente creado correctamente", 201)
+    });
+    static updateclients = errorHandler(async (req: Request, res: Response) => {
+        const {id_client} = req.params;
+        const {...restOfBody} = req.body;
+        if (String(id_client) === undefined || !id_client){
+            return ApiResponse.errorOperations(res, 
+                "se necesita identificacion del cliente para actualizar")
+        }
+        if (String(restOfBody.name)) {
+            const userFound = await clientsModel.getClientForController(String(restOfBody.name));
+            if (userFound) {
+                return ApiResponse.errorOperations(res, "ya existe un cliente creado con el mismo nombre");
+            }
+        }
+        if (String(restOfBody.email)) {
+            const userFound = await clientsModel.getClientForController(String(restOfBody.email));
+            if (userFound) {
+                return ApiResponse.errorOperations(res,
+                    "ya existe un cliente con el mismo email");
+            }
+        }
+        if (String(restOfBody.dni)){
+            const userFound = await clientsModel.getClientForController(String(restOfBody.dni));
+            if (userFound){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un cliente con el mismo dni")
+            }
+        }
+        if (String(restOfBody.ruc)){
+            const userFound = await clientsModel.getClientForController(String(restOfBody.ruc));
+            if (userFound){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un cliente con el mismo ruc")
+            }
+        }
+        if (String(restOfBody.cellPhone)){
+            const userFound = await clientsModel.getClientForController(String(restOfBody.cellPhone));
+            if (userFound){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un cliente con el mismo numero telefonico")
+            }
+        }
+        const clientConverted: updateClients = {
+            ...restOfBody
+        }
+        const clientUpdated = await clientsModel.updateClients(String(id_client!), clientConverted);
+        if (clientUpdated === undefined || !clientUpdated){
+            return ApiResponse.errorOperations(res, 
+                "error interno al actualizar al cliente", 500)
+        }
+        return ApiResponse.operations(res, "cliente actualizado correctamente")
+    });
+    static deleteClients = errorHandler(async (req: Request, res: Response) => {
+        const {id_client} = req.params;
+        if (String(id_client) === undefined || !id_client){
+            return ApiResponse.errorOperations(res, 
+                "se necesita identificacion del cliente para actualizar")
+        }
+        const clientDeleted = await clientsModel.deleteClients(String(id_client!));
+        if (clientDeleted === undefined || !clientDeleted) {
+            return ApiResponse.errorOperations(res, 
+                "error interno al eliminar el cliente", 500)
+        }
+        return ApiResponse.operations(res, "cliente eliminado correctamente")
+    })
+}
+
+export default ClientsController;) | HISTORY.CONTROLLER (import historyModel from "@/models/history.model.js";
+import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/typos.express.js";
+import { errorHandler } from "@/middlewares/errors.middlewares.js";
+
+class HistoryController {
+    static getHistory = errorHandler(async (req: Request, res: Response) => {
+        const results = await historyModel.getUserSells();
+        if (results === undefined) {
+            return ApiResponse.errorOperations(res, 
+                "error interno al obtener historial", 500)
+        }
+        return ApiResponse.returnResults(res, results)
+    });
+}
+
+export default HistoryController;) | PRODUCTS.CONTROLLER (import { errorHandler } from "@/middlewares/errors.middlewares.js";
+import productsModel from "@/models/products.model.js";
+import { ApiResponse } from "@/utils/typos.express.js";
+import type { modelProducts, updateProducts } from "@modelTypes/bd.types.js";
+import type { Request, Response } from "express";
+
+class ProductsController {
+    static getProducts = errorHandler(async (req: Request, res: Response) => {
+        const results = await productsModel.getProductsDinamicly();
+        if (results === undefined || !results) {
+            return ApiResponse.errorOperations(res, "error interno al obtener productos", 500)
+        }
+        return ApiResponse.returnResults(res, results);
+    });
+    static createProduct = errorHandler(async(req: Request, res: Response) => {
+        const {...restOfBody} = req.body;
+        if (Object.keys(restOfBody).length <= 0 || restOfBody === undefined) {
+            return ApiResponse.errorOperations(res, 
+                "no se envio los datos requeridos para crear el producto");
+        }
+        if (String(restOfBody.bars_code)) {
+            const productFound = await productsModel.getProductForController(String(restOfBody.bars_code!));
+            if (productFound) {
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un producto con el mismo codigo de barras, intentelo denuevo")
+            }
+        }
+        const productConverted: modelProducts = {
+            ...restOfBody
+        }
+        const productCreated = await productsModel.createProduct(productConverted);
+        if (!productCreated.id || productCreated === undefined) {
+            return ApiResponse.errorOperations(res, "error interno al crear el producto", 500);
+        }
+        return ApiResponse.operations(res, "producto creado correctamente", 201)
+    });
+    static updateProduct = errorHandler(async (req: Request, res: Response) => {
+        const {id_product} = req.params;
+        const {...restOfBody} = req.body;
+        if (String(id_product) === undefined || !id_product) {
+            return ApiResponse.errorOperations(res, "se necesita identificacion del producto")
+        }
+        if (Object.keys(restOfBody).length < 1 || restOfBody === undefined) {
+            return ApiResponse.errorOperations(res, 
+                "se requiere de almenos un campo para actualizar el producto")
+        }
+        if (String(restOfBody.bars_code)) {
+            const productFound = await productsModel.getProductForController(String(restOfBody.bars_code!));
+            if (productFound) {
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un producto con el mismo codigo de barras, intentelo denuevo")
+            }
+        }
+        const productConverted: updateProducts = {
+            ...restOfBody,
+        }
+        const productUpdated = await productsModel.updateProduct(String(id_product!), productConverted);
+        if (!productUpdated.id || productUpdated === undefined) {
+            return ApiResponse.errorOperations(res, 
+                "error interno al actualizar el producto", 500)
+        }
+        return ApiResponse.operations(res, "producto actualizado correctamente")
+    });
+    static deleteProduct = errorHandler(async (req: Request, res: Response) => {
+        const {id_product} = req.params;
+        if (String(id_product) === undefined || !id_product) {
+            return ApiResponse.errorOperations(res, "se necesita identificacion del producto")
+        }
+        const productDeleted = await productsModel.deleteProduct(String(id_product!));
+        if (productDeleted === undefined || !productDeleted.id) {
+            return ApiResponse.errorOperations(res, 
+                "error al eliminar el producto", 500)
+        }
+        return ApiResponse.operations(res, "producto eliminado correctamente")
+    });
+}
+
+export default ProductsController;) | SELLS.CONTROLLER (import sellsService from "@/services/sells.service.js";
+import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/typos.express.js";
+import { errorHandler } from "@/middlewares/errors.middlewares.js";
+import type { InitSell, Status } from "@/types/bd.types.js";
+
+class SellsController {
+    static initSell = errorHandler(async (req: Request, res: Response) => {
+        const {...restOfBody} = req.body;
+        const {userId} = req.user!;
+        if (userId === undefined || !userId) {
+            return ApiResponse.errorOperations(res, 
+                "se necesita identificacion del usuario")
+        }
+        if (Object.keys(restOfBody).length === 0 || !restOfBody.itemsSelected) {
+            return ApiResponse.errorOperations(res, 
+                "los campos enviados no son suficientes para procesar venta")
+        }
+        const initSellConverted: InitSell = {
+            ...restOfBody,
+        }
+        const sellInitiated = await sellsService.initSell(userId, initSellConverted);
+        if (sellInitiated === undefined || !sellInitiated){
+            return ApiResponse.errorOperations(res, 
+                "error interno al iniciar venta", 500)
+        }
+        if (!sellInitiated.success) {
+            return ApiResponse.errorOperations(res, sellInitiated.errors?.join(' | ') || "");
+        }
+        return ApiResponse.operations(res, "venta iniciada correctamente", 201)
+    });
+    static updateState = errorHandler(async (req: Request, res: Response) => {
+        const {id_sell} = req.params;
+        const {status} = req.body;
+
+        if (String(id_sell!) === undefined || !String(id_sell!)) {
+            return ApiResponse.errorOperations(res, 
+                "se requiere identificacion de la venta para proceder")
+        }
+        const validStatus:Status[] = ["ANULADO", "CANCELADO", "EN_PROCESO"];
+        if (!validStatus.includes(status)) {
+            return ApiResponse.errorOperations(res, 
+                "el status enviado no es valido")
+        }
+        const statusConverted = status as Status;
+        const sellUpdated = await sellsService.updateSellStatus(String(id_sell), statusConverted);
+        if (!sellUpdated.success) {
+            return ApiResponse.errorOperations(res, sellUpdated.errors?.join(' | ') || "")
+        }
+        if (sellUpdated === undefined || !sellUpdated) {
+            return ApiResponse.errorOperations(res, "error interno al actualizar status de venta", 500)
+        }
+        return ApiResponse.operations(res, "status actualizado correctamente")
+    })
+}
+
+export default SellsController;) | USERS.CONTROLLER (import usersModel from "@/models/users.model.js";
+import bcrypt from "bcrypt"
+import { errorHandler } from "@/middlewares/errors.middlewares.js";
+import type { Request, Response } from "express";
+import { ApiResponse } from "@/utils/typos.express.js";
+import type { modelUser, updateUser } from "@modelTypes/bd.types.js";
+
+class UsersController {
+    static getUsers = errorHandler(async (req: Request, res: Response) => {
+        const results = await usersModel.returnUsers();
+        if (results === undefined || !results) {
+            return ApiResponse.errorOperations(res, "error interno al obtener los usuarios", 500);
+        }
+        return ApiResponse.returnResults(res, results);
+    });
+    static createUser = errorHandler(async (req: Request, res: Response) => {
+        const {...restOfBody} = req.body;
+        if (Object.keys(restOfBody).length <= 0 || String(restOfBody.name!) === undefined) {
+            return ApiResponse.errorOperations(res, 
+                "se necesita por lo menos el nombre del usuario para proceder");
+        }
+        if (String(restOfBody.email!)){
+            const userLocated = await usersModel.returnUserByEmail(String(restOfBody.email!));
+            
+            if (userLocated?.email === String(restOfBody.email!)){
+                return ApiResponse.errorOperations(res, 
+                    "ya existe un usuario con el mismo email ingresado");
+            }
+        }
+        const passwordHashed = await bcrypt.hash(restOfBody.password!, Number(process.env["HASH_SALTS"]!));
+        const userConverted: modelUser = {
+            ...restOfBody,
+            ...({
+                password: passwordHashed,
+            }),
+        };
+        const userCreated = await usersModel.createUser(userConverted);
+        if (userCreated === undefined || !userConverted) {
+            return ApiResponse.errorOperations(res, "error interno al crear al usuario", 500);
+        }
+        return ApiResponse.operations(res, "usuario creado correctamente", 201);
+    });
+    static updateUser = errorHandler(async (req: Request, res: Response) => {
+        const {id_user} = req.params;
+        const {...restOfBody} = req.body;
+        if (Object.keys(restOfBody).length <= 0 || String(restOfBody.name!) === undefined) {
+            return ApiResponse.errorOperations(res, "se requiere por lo menos 1 campo a actualizar")
+        }
+        if (String(id_user!) === undefined){
+            return ApiResponse.errorOperations(res, "se requiere identificacion del usuario");
+        }
+        if (String(restOfBody.email!)) {
+            const userFound = await usersModel.returnUserByEmail(String(restOfBody.email!));
+            if (userFound?.email === String(restOfBody.email!) && userFound.id !== String(id_user!)){
+                return ApiResponse.errorOperations(res, "ya existe un usuario con el mismo email ingresado")
+            }
+        }
+        const userConverted: updateUser = {
+            ...restOfBody,
+            ...(
+                restOfBody.password && {
+                    password: await bcrypt.hash(String(restOfBody.password!), Number(process.env["HASH_SALTS"]!))
+                }
+            ),
+        };
+        const userUpdated = await usersModel.updateUser(String(id_user!), userConverted);
+        if (userUpdated === undefined || !userUpdated.id) {
+            return ApiResponse.errorOperations(res, "error al actualizar al usuario", 500);
+        }
+        return ApiResponse.operations(res, "usuario actualizado correctamente");
+    });
+    static deleteUser = errorHandler(async (req: Request, res: Response) => {
+        const {id_user} = req.params;
+        if (String(id_user!) === undefined){
+            return ApiResponse.errorOperations(res, "se requiere identificacion del usuario");
+        }
+        const userDeleted = await usersModel.deleteUser(String(id_user!));
+        if (userDeleted === undefined) {
+            return ApiResponse.errorOperations(res, "error interno al eliminar usuario")
+        }
+        return ApiResponse.operations(res, "usuario eliminado correctamente")
+    });
+}
+
+export default UsersController;) | BD.TYPES.TS (export type Rol = 'ADMIN' | 'ALMACENERO'
+export type TypeVoucher = 'BOLETA' | 'FACTURA'
+export type Status = 'CANCELADO' 
+| 'EN_PROCESO' | 'ANULADO';
+
+export interface modelUser {
+    name: string;
+    email: string
+    password: string     
+    Rol?: Rol
+}
+export interface updateUser {
+    name?: string;
+    email?: string
+    password?: string     
+    Rol?: Rol
+}
+export interface modelClients {
+    name : string;
+    email? : string;
+    dni? : string;
+    ruc? : string;
+    cellPhone? : string;
+}
+export interface updateClients {
+    name?: string;
+    email? : string;
+    dni? : string;
+    ruc? : string;
+    cellPhone? : string;
+}
+export interface modelProducts {
+    name : string;
+    bars_code: string;
+    lote?: string;
+    expiration_date: Date;
+    unity_price: number;
+    limit_minor_adquirition?: number;
+    minorsale_price: number;
+    wholesale_price: number;
+    current_stock?: number;
+    minimun_stock?: number;
+}
+export interface updateProducts {
+    name?: string;
+    bars_code?: string;
+    lote?: string;
+    expiration_date?: Date;
+    unity_price?: number;
+    limit_minor_adquirition?: number;
+    minorsale_price?: number;
+    wholesale_price?: number;
+    current_stock?: number;
+    minimun_stock?: number;
+}
+export interface InitSell {
+    clientId: string;
+    typeVoucher: TypeVoucher;
+    itemsSelected: Array<{
+        productId: string;
+        quantity: number;
+    }>
+}
+
+export interface JwtPayload {
+    userId: string;
+    rol: Rol;
+}
+
+export interface AuthResponse {
+    user: {
+        userId: string;
+        rol: Rol;
+    }
+}) | TYPOS.EXPRESS (import type { AuthResponse } from "@modelTypes/bd.types.js";
+import type { Response } from "express";
+
+export class ApiResponse {
+    static auth(res: Response, token: string, message: string, user: AuthResponse, status = 200) {
+        return res.status(status).json({token, message, user});
+    };
+    static returnResults<T>(res: Response, data: T, status = 200) {
+        return res.status(status).json({data})
+    };
+    static operations(res: Response, message: string, status = 200) {
+        return res.status(status).json({message})
+    };
+    static errorOperations(res: Response, message: string, status = 400) {
+        return res.status(status).json({error: true, message})
+    };
+}
+)
 ]

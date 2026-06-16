@@ -28,9 +28,7 @@ class AuthController {
             process.env["SESSION_SECRET"] || "",
             {expiresIn: '24h'}
         );
-        return ApiResponse.auth(res, genToken, "autenticado correctamente, dirigiendo ",
-            {user: {userId: usersGotten.id, rol: usersGotten.rol}}
-        )
+        return ApiResponse.auth(res, genToken, "autenticado correctamente, dirigiendo ", {userId: usersGotten.id, rol: usersGotten.rol})
     });
 }
 

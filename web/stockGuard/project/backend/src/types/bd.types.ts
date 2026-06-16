@@ -68,8 +68,6 @@ export interface JwtPayload {
 }
 
 export interface AuthResponse {
-    user: {
-        userId: string;
-        rol: Rol;
-    }
+    userId: string;
+    rol: Rol;
 }
