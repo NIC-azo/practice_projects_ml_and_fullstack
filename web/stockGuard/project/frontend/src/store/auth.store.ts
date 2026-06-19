@@ -1,7 +1,7 @@
 import {create} from "zustand";
 import type {AuthStoreInterface} from "@/types/typos.bd"
 
-const useAuthStore = create<AuthStoreInterface>((set) => ({
+export const useAuthStore = create<AuthStoreInterface>((set) => ({
     token: null,
     user: null,
     isAutenticated: false,
@@ -23,7 +23,5 @@ const useAuthStore = create<AuthStoreInterface>((set) => ({
             return true;
         }
         return false;
-    }
+    },
 }));
-
-export default useAuthStore;

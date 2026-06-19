@@ -22,6 +22,11 @@ export interface ErrorOperationsTypo {
     message: string;
 }
 
+export interface ThemeStoreInterface {
+    theme: 'light' | 'dark';
+    toggleTheme: () => void;
+}
+
 export interface AuthStoreInterface {
     isAutenticated: boolean;
     token: string | null;

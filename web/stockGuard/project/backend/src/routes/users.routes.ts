@@ -19,6 +19,7 @@ class UserRoutes {
         this.router.post('/create', roleMiddleware("ADMIN"), UsersController.createUser);
         this.router.put('/update/:id_user', roleMiddleware("ADMIN"), UsersController.updateUser);
         this.router.delete('/delete/:id_user', roleMiddleware("ADMIN"), UsersController.deleteUser);
+        this.router.get('/profile', roleMiddleware("ADMIN", "ALMACENERO"), UsersController.getUserForProfile)
     }
 }
 

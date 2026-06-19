@@ -20,6 +20,20 @@ class UsersModel {
             },
         });
     };
+    returnUser = async (id: string) => {
+        return await prismaInstance.users.findFirst({
+            where: {
+                active: true,
+                id: id,
+            },
+            select: {
+                name: true,
+                email: true,
+                rol: true,
+                createdAt: true,
+            },
+        });
+    }
     returnUserByEmail = async (email: string) => {
         return await prismaInstance.users.findFirst({
             where: {

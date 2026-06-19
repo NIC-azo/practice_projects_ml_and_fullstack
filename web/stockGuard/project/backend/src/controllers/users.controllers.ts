@@ -13,6 +13,17 @@ class UsersController {
         }
         return ApiResponse.returnResults(res, results);
     });
+    static getUserForProfile = errorHandler(async (req: Request, res: Response) => {
+        const {userId} = req.user!;
+        if (userId === undefined) {
+            return ApiResponse.errorOperations(res, "usuario no identificado", 401)
+        }
+        const result = await usersModel.returnUser(userId);
+        if (result === undefined) {
+            return ApiResponse.errorOperations(res, "no se encontro al usuario o no esta identificado", 500)
+        }
+        return ApiResponse.returnResults(res, result);
+    })
     static createUser = errorHandler(async (req: Request, res: Response) => {
         const {...restOfBody} = req.body;
         if (Object.keys(restOfBody).length <= 0 || String(restOfBody.name!) === undefined) {
