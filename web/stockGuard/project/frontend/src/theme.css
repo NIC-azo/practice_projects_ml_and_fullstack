@@ -1,0 +1,18 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+    --background-dark: #ffffff;
+    --background-buttons: rgb(66, 43, 196);
+    --blur-for-shadows: rgb(144, 143, 151);
+    --color-text-button: #ffff;
+    --color-text-general: rgb(23, 72, 136);
+
+}
+
+.dark {
+    --background-dark: #080b14;
+    --background-buttons: #464646;
+    --blur-for-shadows: rgb(170, 166, 201);
+    --color-text-button: #e2e2e2;
+    --color-text-general: rgb(43, 118, 189);
+}
