@@ -1,6 +1,8 @@
+export type Rol = 'ADMIN' | 'ALMACENERO';
+
 export interface UserForTypos {
     userId: string;
-    rol: "ADMIN" | "ALMACENERO";
+    rol: Rol;
 }
 
 export interface AuthResponseTypo {
@@ -58,7 +60,7 @@ export interface UsersResponseData {
     name: string;
     id: string;
     email: string;
-    rol: "ADMIN" | "ALMACENERO";
+    rol: Rol;
     createdAt: string;
     updatedAt: string;
 }
@@ -91,7 +93,7 @@ export interface HistoryResponseData {
     total: number;
     user: {
         name: string;
-        rol: "ADMIN" | "ALMACENERO";
+        rol: Rol;
     };
     detail: Array<{
         quantity: number;
@@ -101,3 +103,15 @@ export interface HistoryResponseData {
         };
     }>
 }
+
+export interface ProductsAlertResponse {
+    alerts: number;
+}
+
+export interface AdminDataReportsResponse {
+    totalInventoryValue: number;
+    sellsToday: number;
+    usersTotal: number;
+}
+
+export type FormType = 'USERS' | 'PRODUCTS' | 'CLIENTS';
