@@ -36,11 +36,31 @@ const DinamycForm = (
     return (
         <div className="inset-0 fixed z-50 flex items-center justify-center p-4">
             <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                className="absolute inset-0 bg-black/50 backdrop-blur-sm duration-200
+                animate-fade-out-form-modal"
                 onClick={() => setIsOpen(false)} />
             <div
-                className={`relative bg-background-dark`}>
-
+                className={`relative bg-background-dark rounded-xl shadow-blur-for-shadows w-full
+                ${sizeClasses[size || 'md']}
+                max-h-[90vh] overflow-hidden flex flex-col
+                animate-fade-in-form-modal duration-200
+                `}>
+                <div
+                    className="flex items-center justify-center px-6 py-4 border-b border-gray-200 shadow-background-dark/25">
+                    <h3 className="text-xl font-semibold bg-color-text-general">
+                        {title}
+                    </h3>
+                    <button
+                        className="bg-background-emojis-color-alert hover:bg-red-700 rounded-lg p-2"
+                        type="button"
+                        onClick={() => setIsOpen(false)}
+                        aria-label="cancelar">
+                        <i className="fa-solid fa-x bg-color-text-button hover:bg-white/20 ease-in duration-100 text-xl"/>
+                    </button>
+                </div>
+                <div className="flex-1 overflow-y-auto px-6 py-4"> 
+                    {children}
+                </div>
             </div>
         </div>
     );

@@ -11,6 +11,31 @@
     --color-background-dinamyc-general: rgb(226, 226, 226);
 
     --shadow-blur-for-shadows: 0 4px 6px -1px rgb(144, 143, 151);
+
+    --animate-fade-in-form-modal: fade-in 0.5s ease-in;
+    --animate-fade-out-form-modal: fade-out 0.5s ease-out;
+
+    @keyframes fade-in {
+        0% {
+            opacity: 0;
+            transform: scaleY(0%);
+        }
+        100% {
+            opacity: 1;
+            transform: scaleY(100%)
+        }
+    }
+
+    @keyframes fade-out {
+        0% {
+            opacity: 1;
+            transform: scaleY(100%);
+        }
+        100% {
+            opacity: 0;
+            transform: scaleY(0%)
+        }
+    }
 }
 
 .dark {
