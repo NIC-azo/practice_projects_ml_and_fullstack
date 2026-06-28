@@ -114,4 +114,10 @@ export interface AdminDataReportsResponse {
     usersTotal: number;
 }
 
+export interface NavItems {
+    to: string;
+    icon: string;
+    label: string;
+} 
+
 export type FormType = 'USERS' | 'PRODUCTS' | 'CLIENTS';
