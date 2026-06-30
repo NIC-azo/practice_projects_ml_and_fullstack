@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoutes from "@/secure/ProtectedRoutes";
 import Login from "@/app/pages/Login";
 import RedirectGuest from "@/secure/RedirectGuest";
+import MainLayout from "@/layout/MainLayout";
 
 const AppRouter = () => (
     <Routes>
@@ -11,7 +12,7 @@ const AppRouter = () => (
         </Route>
         <Route element={<ProtectedRoutes allowedRoles={["ADMIN", "ALMACENERO"]}/>}>
             <Route>
-                <Route path="/dashboard"element={}/>
+                <Route path="/dashboard"element={<MainLayout />}/>
             </Route>
         </Route>
     </Routes>

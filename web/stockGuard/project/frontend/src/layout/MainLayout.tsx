@@ -28,8 +28,8 @@ const MainLayout = () => {
 
     return (
         <div className="flex h-screen w-full overflow-hidden bg-background-dinamyc-general font-sans">
-            <aside className={`flex flex-col h-full transition-all duration-300 shrink-0 border-r w-[${collapsed ? '64px' : '220px'}]
-            bg-background-dinamyc-general/90 border-background-dinamyc-general/25`}>
+            <aside className={`flex flex-col h-full transition-all duration-300 shrink-0 border-r ${collapsed ? 'w-16' : 'w-54'}
+            bg-background-dinamyc-general/90 border-background-dinamyc-general/25 w-5`}>
                 <div className="flex items-center gap-3 px-4 py-5 border-b border-background-dinamyc-general/25">
                     <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-background-buttons">
                         <i className="fa-solid fa-store size-4 text-background-emojis-color"/>
