@@ -118,6 +118,7 @@ export interface NavItems {
     to: string;
     icon: string;
     label: string;
+    adminOnly?: boolean;
 } 
 
 export type FormType = 'USERS' | 'PRODUCTS' | 'CLIENTS';
