@@ -13,7 +13,16 @@ class DashboardModel {
             select: {
                 name: true,
                 current_stock: true,
+                minimun_stock: true,
                 bars_code: true,
+            },
+        });
+    };
+
+    totalProducts = async () => {
+        return await prismaInstance.products.count({
+            where: {
+                active: true,
             },
         });
     };

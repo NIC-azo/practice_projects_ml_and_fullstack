@@ -69,9 +69,21 @@ const Dashboard = () => {
   }, [user, navigate]);
 
   const Kpis: KpisInterface[] = [
-    {label: 'Total de productos', value: String(productsAlert?.alerts ?? 0), 
-    sub: `${productsAlert?.alerts} producto${productsAlert?.alerts === 1 && 's'} menos`,
-    up: false, icon: 'fa-solid fa-cube', color: ''
+    {
+     label: 'Total de productos', value: String(productsAlert?.alerts ?? 0), icon: 'fa-solid fa-cube', 
+     color: 'text-background-emojis-color-alert'
+    },
+    {
+      label: "Valor total del inventario", value: String(adminData?.totalInventoryValue ?? 0),
+      icon: "fa-solid fa-dollar-sign", color: 'text-background-emojis-color'
+    },
+    {
+      label: 'Ventas de Hoy', value: String(adminData?.sellsToday ?? 0), icon: 'fa-solid fa-bag-shopping', 
+      color: 'text-green-700'
+    },
+    {
+      label: 'Total de Usuarios', value: String(adminData?.usersTotal ?? 0), icon: 'fa-solid fa-people-group', 
+      color: 'text-purple-700'
     }
   ];
 
@@ -83,5 +95,31 @@ const Dashboard = () => {
     );
   }
 
-  return <div></div>;
+  return (
+    <div className="space-y-6 font-sans">
+      <div>
+        <h1 className="text-xl font-semibold text-color-text-general/50">Dashboard</h1>
+        <p className="text-sm mt-0.5 text-color-text-general/75">
+          Resumen de operaciones - {new Date().toLocaleDateString('es-PE', {weekday: 'long', year: 'numeric', month: 'long',
+            day: 'numeric'
+          })}
+        </p>
+      </div>
+      <div>
+        {Kpis.map(({label, value, icon, color}) => (
+          <div key={label} className="rounded-xl p-5 border bg-background-dinamyc-general/35 border-background-buttons/20">
+            <div className="flex items-center justify-between mb-3">
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-${color}`}>
+                <i className={icon + 'size-4.5 ' + color}/>
+              </div>
+            </div>
+            <p className="text-2xl font-semibold text-color-text-general/50 font-mono">
+              {value}
+            </p>
+            <p className="text-xs font-medium mt-2 text-color-text-general/75">{label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };

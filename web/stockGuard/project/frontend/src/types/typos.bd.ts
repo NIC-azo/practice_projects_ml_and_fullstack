@@ -126,8 +126,6 @@ export type FormType = 'USERS' | 'PRODUCTS' | 'CLIENTS';
 export interface KpisInterface {
     label: string;
     value: string;
-    sub: string;
-    up: boolean;
     icon: string;
     color: string;
 }
