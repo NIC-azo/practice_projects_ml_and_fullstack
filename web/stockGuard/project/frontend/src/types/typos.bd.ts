@@ -112,6 +112,15 @@ export interface AdminDataReportsResponse {
     totalInventoryValue: number;
     sellsToday: number;
     usersTotal: number;
+    latest5Transactions: Array<{
+        id: string;
+        createdAt: Date;
+        status: "CANCELADO" | "EN_PROCESO" | "ANULADO";
+        total: number;
+        user: {
+            name: string;
+        };
+    }>
 }
 
 export interface NavItems {

@@ -13,10 +13,11 @@ class DashboardController {
     });
 
     static adminDataReports = errorHandler(async (req: Request, res: Response) => {
-        const [totalInventoryValue, sellsToday, usersTotal] = await Promise.all([
+        const [totalInventoryValue, sellsToday, usersTotal, latest5Transactions] = await Promise.all([
             dashboardModel.totalInventoryValue(),
             dashboardModel.sellsToday(),
             dashboardModel.usersTotal(),
+            dashboardModel.latest5Transactions(),
         ]);
 
         if (totalInventoryValue === undefined) {
@@ -36,10 +37,17 @@ class DashboardController {
             )
         }
 
+        if (latest5Transactions === undefined) {
+            return ApiResponse.errorOperations(res, "error interno al obtener los 5 ultimos movimientos",
+                500
+            )
+        }
+
         const results = {
             totalInventoryValue,
             sellsToday,
             usersTotal,
+            latest5Transactions,
         };
         
         return ApiResponse.returnResults(res, results);

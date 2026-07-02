@@ -53,7 +53,7 @@ class DashboardModel {
         const endOfDay = new Date();
         endOfDay.setUTCHours(23, 59, 59, 999);
 
-        const results = await prismaInstance.sells.count({
+        return await prismaInstance.sells.count({
             where: {
                 status: "CANCELADO",
                 createdAt: {
@@ -62,14 +62,30 @@ class DashboardModel {
                 },
             },
         });
-
-        return results;
     };
 
     usersTotal = async () => {
         return await prismaInstance.users.count({
             where: {
                 active: true,
+            },
+        });
+    };
+
+    latest5Transactions = async () => {
+        return await prismaInstance.sells.findMany({
+            take: 5,
+            orderBy: {
+                createdAt: 'desc',
+            },
+            select: {
+                id: true,
+                createdAt: true,
+                total: true,
+                status: true,
+                user: {
+                    select: {name: true,},
+                },
             },
         });
     };
