@@ -4,7 +4,7 @@ import axios from "axios";
 const ENVIRONMENT = import.meta.env["VITE_NODE_ENV"];
 
 const api = axios.create({
-    baseURL: ENVIRONMENT === "dev" ? "VITE_LOCAL_API_URL" : "VITE_API_URL",
+    baseURL: ENVIRONMENT === "dev" ? import.meta.env["VITE_LOCAL_API_URL"] : import.meta.env["VITE_API_URL"],
     headers: {
         "Content-Type": "application/json",
     },

@@ -3,6 +3,7 @@ import ProtectedRoutes from "@/secure/ProtectedRoutes";
 import Login from "@/app/pages/Login";
 import RedirectGuest from "@/secure/RedirectGuest";
 import MainLayout from "@/layout/MainLayout";
+import Dashboard from "@/app/pages/Dashboard";
 
 const AppRouter = () => (
     <Routes>
@@ -11,8 +12,8 @@ const AppRouter = () => (
             <Route path="/login" element={<Login />}/>
         </Route>
         <Route element={<ProtectedRoutes allowedRoles={["ADMIN", "ALMACENERO"]}/>}>
-            <Route>
-                <Route path="/dashboard"element={<MainLayout />}/>
+            <Route element={<MainLayout />}>
+                <Route path="/dashboard"element={<Dashboard />}/>
             </Route>
         </Route>
     </Routes>

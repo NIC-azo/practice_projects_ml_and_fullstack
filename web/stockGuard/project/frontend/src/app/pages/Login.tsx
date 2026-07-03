@@ -114,7 +114,7 @@ function Login() {
                             </div>
                         </div>
                         <button 
-                            type="button"
+                            type="submit"
                             disabled={loading}
                             className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 flex items-center justify-center
                             gap-2 mt-2` +  loading ? `bg-gray-600` : `bg-background-buttons` + 'text-color-text-general' + loading ? 'cursor-not-allowed' : 'cursor-pointer'}
