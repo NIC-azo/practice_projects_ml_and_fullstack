@@ -24,11 +24,7 @@ function Login() {
 
             const response = await request<AuthResponseTypo>("post", "/auth/login", formData);
             login(response.token, response.user);
-            if (response.user.rol === "ADMIN") {
-                navigate("/admin");
-            } else {
-                navigate("/almacenero");
-            }
+            navigate("/dashboard", {replace: true})
             clearFields();
         } catch (error) {
             const errorConfigured = error as CustomApiError;

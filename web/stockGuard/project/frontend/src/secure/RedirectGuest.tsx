@@ -5,8 +5,7 @@ const RedirectGuest = () => {
     const {isAutenticated, user} = useAuthStore();
 
     if (isAutenticated && user) {
-        const redirectTo = user.rol === "ADMIN" ? '/admin/users' : '/almacenero/dashboard';
-        return <Navigate to={redirectTo} replace />;
+        return <Navigate to={"/dashboard"} replace />;
     }
 
     return <Outlet />

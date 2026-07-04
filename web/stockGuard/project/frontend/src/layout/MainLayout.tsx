@@ -4,13 +4,13 @@ import type { NavItems } from "@/types/typos.bd";
 import { useState } from "react";
 
 const navItems: NavItems[] = [
+    {to: '/dashboard', icon: 'fa-solid fa-chart-line', label: 'Dashboard'},
     {to: '/pos', icon: 'fa-solid fa-cart-arrow-down', label: 'Punto de Ventas'},
     {to: '/products', icon: 'fa-solid fa-cart-flatbed', label: 'Productos'},
     {to: '/clients', icon: 'fa-solid fa-users', label: 'Clientes'},
     {to: '/users', icon: 'fa-solid fa-user-gear', label: 'Usuarios', adminOnly: true},
     {to: '/history', icon: 'fa-solid fa-book', label: 'Historial', adminOnly: true},
     {to: '/profile', icon: 'fa-circle-user', label: 'Perfil'},
-    {to: '/dashboard', icon: 'fa-solid fa-chart-line', label: 'Dashboard'},
 ];
 
 const MainLayout = () => {
@@ -24,7 +24,8 @@ const MainLayout = () => {
     }
 
 
-    const visibleNav = navItems.filter((item) => item.adminOnly);
+    const visibleNav = navItems.filter((item) => item.adminOnly && user?.rol !== "ADMIN"
+    ? false : true);
 
     return (
         <div className="flex h-screen w-full overflow-hidden bg-background-dinamyc-general font-sans">
@@ -74,7 +75,7 @@ const MainLayout = () => {
                 type="button"
                 title={collapsed ? 'ver mas' : 'colapsar'}
                 className={`absolute z-10 flex items-center justify-center w-5 h-10 rounded-r-md transition-all duration-300 
-                hover:opacity-100 opacity-60 left-[${collapsed ? '64px' : '220px'}] top-[50%] transform-[translateY(-50%)] 
+                hover:opacity-100 opacity-60 ${collapsed ? 'left-16' : 'left-55'} top-[50%] transform-[translateY(-50%)] 
                 bg-background-dinamyc-general/10 text-background-dinamyc-general/85`}
                 >
                 <i className={collapsed ? `fa-solid  fa-chevron-right size-3` : `fa-solid fa-chevron-left size-3`}/>
