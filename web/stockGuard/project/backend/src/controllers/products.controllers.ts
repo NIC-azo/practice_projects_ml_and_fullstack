@@ -61,6 +61,21 @@ class ProductsController {
         }
         return ApiResponse.operations(res, "producto actualizado correctamente")
     });
+    static updateStockProduct = errorHandler(async (req: Request, res: Response) => {
+        const {id_product} = req.params;
+        const {newStock} = req.body;
+        if (String(id_product) === undefined || !id_product) {
+            return ApiResponse.errorOperations(res, "se necesita identificacion del producto");
+        }
+        if (!Number(newStock) || isNaN(Number(newStock))) {
+            return ApiResponse.errorOperations(res, "Dato no congruente con la operacion o invalido")
+        }
+        const productUpdated = await productsModel.updateStockProduct(String(id_product), Number(newStock));
+        if (!productUpdated.id || productUpdated === undefined) {
+            return ApiResponse.errorOperations(res, "error interno al actualizar el stock del producto", 500)
+        }
+        return ApiResponse.operations(res, "stock del producto actualizado correctamente")
+    })
     static deleteProduct = errorHandler(async (req: Request, res: Response) => {
         const {id_product} = req.params;
         if (String(id_product) === undefined || !id_product) {

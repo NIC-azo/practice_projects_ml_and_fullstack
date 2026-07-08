@@ -45,6 +45,21 @@ class ProductsModel {
             },
         });
     };
+    updateStockProduct = async (id:string, stock: number) => {
+        return await prismaInstance.products.update({
+            where: {
+                id: id,
+            },
+            data: {
+                current_stock: {
+                    increment: stock,
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+    }
     deleteProduct = async (id: string) => {
         return await prismaInstance.products.update({
             where: {

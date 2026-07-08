@@ -16,7 +16,8 @@ class ProductRoutes {
         this.router.get('/health', () => console.log('products route funcionando'));
         this.router.get('/', roleMiddleware("ADMIN", "ALMACENERO"), ProductsController.getProducts);
         this.router.post('/create', roleMiddleware("ADMIN"), ProductsController.createProduct);
-        this.router.put('/update/:id_product', roleMiddleware("ADMIN", "ALMACENERO"), ProductsController.updateProduct);
+        this.router.put('/update/:id_product', roleMiddleware("ADMIN"), ProductsController.updateProduct);
+        this.router.put('/updateStock/:id_product', roleMiddleware("ADMIN", "ALMACENERO"), ProductsController.updateStockProduct);
         this.router.delete('/delete/:id_product', roleMiddleware("ADMIN"), ProductsController.deleteProduct);
     }
 }
