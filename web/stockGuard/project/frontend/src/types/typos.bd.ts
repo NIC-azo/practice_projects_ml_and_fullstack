@@ -138,3 +138,37 @@ export interface KpisInterface {
     icon: string;
     color: string;
 }
+
+
+export interface CreateProduct {
+    name: string;
+    active?: boolean;
+    bars_code: string;
+    lote?: string;
+    expiration_date: Date;
+    unity_price: number;
+    limit_minor_adquirition?: number;
+    minorsale_price: number;
+    wholesale_price: number;
+    current_stock?: number;
+    minimun_stock?: number;
+}
+
+/**
+ * export interface ProductsResponseData {
+    name: string;
+    id: string;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+    bars_code: string;
+    lote: string | null;
+    expiration_date: string;
+    unity_price: number;
+    limit_minor_adquirition: number;
+    minorsale_price: number;
+    wholesale_price: number;
+    current_stock: number;
+    minimun_stock: number;
+}
+ */
