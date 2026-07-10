@@ -1,54 +1,63 @@
 import { request } from "@/api/request.config";
 import type {
   ProductsResponseData,
-  ErrorOperationsTypo,
-  OperationsResTypo,
   CustomApiError,
+  CreateProduct,
 } from "@/types/typos.bd";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState } from "react";
 import DinamycForm from "@/app/components/ui/form/DinamycForm";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth.store";
 
+const initialProductValues: CreateProduct = {
+  name: "",
+  bars_code: "",
+  lote: "",
+  expiration_date: "",
+  unity_price: 0,
+  limit_minor_adquirition: 5,
+  minorsale_price: 0,
+  wholesale_price: 0,
+  current_stock: 5,
+  minimun_stock: 5,
+  active: true,
+};
+
 const ProductsPage = () => {
-  const [data, setData] = useState<ProductsResponseData[]>([]);
-  const [error, setError] = useState<string>("");
-  const [formData, setFormData] = useState<>();
-  const {user} = useAuthStore();
-  const [] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const {
+    data: products = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<ProductsResponseData[], CustomApiError>({
+    queryKey: ["products"],
+    queryFn: async () => {
+      return await request<ProductsResponseData[]>("get", "/products/");
+    },
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  });
+  const [formData, setFormData] = useState<CreateProduct>(initialProductValues);
+  const { user } = useAuthStore();
+  const [active, setActive] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string>("");
 
-  useEffect(() => {
-    getData();
-  }, []);
+  const clearFields = () => {
+    setFormData(initialProductValues);
+    setIsEditing(false);
+    setEditingId(null);
+  };
 
-  const getData = async () => {
-      try {
-        const response = await request<ProductsResponseData[]>(
-          "get",
-          "/products/",
-        );
-        setData(response);
-
-      } catch (error) {
-        const errorConfigured = error as CustomApiError;
-        if (errorConfigured.isNetworkError) {
-          setError(
-            errorConfigured.message || "Error de conexion con el servidor",
-          );
-        }
-        if (errorConfigured.status === 401) {
-          setError(
-            errorConfigured.message ||
-              "su sesion a expirado, vuelva a logearse denuevo",
-          );
-        }
-        if (errorConfigured.status === 403) {
-          setError(
-            errorConfigured.message ||
-              "No tiene permiso de administrador para esta accion",
-          );
-        }
-      }
-    };
+  const createProductHandler = useMutation<unknown, CustomApiError, CreateProduct>({
+    mutationFn: (newProduct) => request("post", "/products", newProduct),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["products"]});
+      clearFields();
+    }
+  })
 };
 
 export default ProductsPage;

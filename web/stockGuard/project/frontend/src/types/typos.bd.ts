@@ -142,16 +142,16 @@ export interface KpisInterface {
 
 export interface CreateProduct {
     name: string;
-    active?: boolean;
     bars_code: string;
     lote?: string;
-    expiration_date: Date;
+    expiration_date: string;
     unity_price: number;
     limit_minor_adquirition?: number;
     minorsale_price: number;
     wholesale_price: number;
     current_stock?: number;
     minimun_stock?: number;
+    active?: boolean;
 }
 
 /**
