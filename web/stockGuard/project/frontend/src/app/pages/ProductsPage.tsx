@@ -136,7 +136,7 @@ const ProductsPage = () => {
           />
       </div>
       <div className="rounded-xl border overflow-hidden bg-purple-500 border-background-buttons/40">
-        <div className="">
+        <div className="grid ">
           
         </div>
       </div>
