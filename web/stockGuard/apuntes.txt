@@ -107,3 +107,13 @@ Ahora que tu base de datos local ya tiene un administrador para realizar pruebas
 
 Dime cuál prefieres y avanzamos con el siguiente paso de tu ruta de aprendizaje Full-stack.
 ---------------------------------
+en ProductsPage:
+
+para crear un producto necesito: los datos del producto.
+flujo: usuario presiona boton->abre formulario->ingresa datos->los datos ingresados son llevados al state que formatea el estado formData->una función se encarga de preparar los datos para subirlos al backend->recibimos resultado->mostramos resultado.
+
+para actualizar un producto necesito: los datos del producto nuevos + el id.
+flujo: usuario presiona "ver mas" del producto en la tabla->llamamos a la función que se encarga del modal seteando el modo, datos actúales del producto seleccionado e id->presiona editar->llamo a la funcion del state que establece en modo edicion->ingresa nuevos valores en cada campo que se muestra en el modal->en cada campo llamo una funcion del state para setear los nuevos datos->presiono "guardar cambios"->automaticamente llama a la función para que decida si el modo de accion esta en "editar", haya un id y este en modo edicion el state->automaticamente esa función llama a la función que permite enviar la petición al backend->intercepto la respuesta->la muestro.
+
+para incrementar el stock de un producto necesito: el valor que se ingrese + el id.
+flujo: usuario presiona "incrementar stock"->se muestra modal->usuario ingresa nuevo valor->bloqueamos si en el formData, el current stock esta en 0 (para prevenir que enviemos 0)->usuario presiona incrementar->llamamos función que decida si estamos en modo "incrementar stock" y hay un id->automáticamente esa función decide el handler correcto que lanza petición al backend->recibimos resultado->mostramos resultado
