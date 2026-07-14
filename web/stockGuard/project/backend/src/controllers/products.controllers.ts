@@ -18,6 +18,10 @@ class ProductsController {
             return ApiResponse.errorOperations(res, 
                 "no se envio los datos requeridos para crear el producto");
         }
+        if (!restOfBody.name || !restOfBody.bars_code || !restOfBody.unity_price || !restOfBody.minorsale_price || !restOfBody.wholesale_price) {
+            return ApiResponse.errorOperations(res, "Faltan campos obligatorios: name, bars_code, unity_price, minorsale_price y wholesale_price son requeridos.", 400)
+        }
+
         if (String(restOfBody.bars_code)) {
             const productFound = await productsModel.getProductForController(String(restOfBody.bars_code!));
             if (productFound) {

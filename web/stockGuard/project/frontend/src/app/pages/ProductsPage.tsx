@@ -3,6 +3,7 @@ import type {
   ProductsResponseData,
   CustomApiError,
   CreateProduct,
+  FormattingProduct,
 } from "@/types/typos.bd";
 import { useMemo, useState } from "react";
 import DinamycForm from "@/app/components/ui/form/DinamycForm";
@@ -62,7 +63,7 @@ const ProductsPage = () => {
     CustomApiError,
     CreateProduct
   >({
-    mutationFn: (newProduct) => request("post", "/create", newProduct),
+    mutationFn: (newProduct) => request("post", "/products/create", newProduct),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
@@ -75,7 +76,8 @@ const ProductsPage = () => {
     CustomApiError,
     { id: string; data: CreateProduct }
   >({
-    mutationFn: ({ id, data }) => request("put", `/update/${id}`, data),
+    mutationFn: ({ id, data }) =>
+      request("put", `/products/update/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
@@ -88,19 +90,40 @@ const ProductsPage = () => {
     CustomApiError,
     { id: string; newStock: number }
   >({
-    mutationFn: ({id, newStock}) => request("put", `/updateStock/${id}`, newStock),
+    mutationFn: ({ id, newStock }) =>
+      request("put", `/products/updateStock/${id}`, { newStock: newStock }),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["products"]});
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
     onError: (error) => setFormError(error.message),
   });
 
-  const handleSubmit = (e?: React.SubmitEvent<HTMLFormElement>) => {
-    if (e !== undefined) {
-      e.preventDefault();
-    }
+  const deleteProductHandler = useMutation<
+    unknown,
+    CustomApiError,
+    { id: string }
+  >({
+    mutationFn: ({ id }) => request("delete", `/products/delete/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      clearFields();
+    },
+    onError: (error) => setFormError(error.message),
+  });
+
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setFormError("");
+
+    if (editingId && handleModal === "increase_stock") {
+      if ((formData.current_stock ?? 0) <= 0) {
+        setFormError("El valor a incrementar debe ser mayor a 0");
+        return;
+      }
+      increaseStockHandler.mutate({id: editingId, newStock: formData.current_stock ?? 0});
+      return;
+    }
 
     const formEnhanced = {
       ...formData,
@@ -108,35 +131,12 @@ const ProductsPage = () => {
         formData.expiration_date ??
         new Date(formData.expiration_date).toISOString(),
     };
-    if (editingId && isEditing && handleModal === "increase_stock") {
-      increaseStockHandler.mutate({id: editingId, newStock: formData.current_stock ?? 0})
-    } else if (editingId && isEditing) {
-      updateProductHandler.mutate({ id: editingId, data: formEnhanced });
+
+    if (editingId && isEditing) {
+      updateProductHandler.mutate({id: editingId, data: formEnhanced});
     } else {
-      createProductHandler.mutate(formEnhanced);
+      createProductHandler.mutate(formEnhanced)
     }
-  };
-
-  const handleEditClick = (product: CreateProduct & { id: string }) => {
-    setIsEditing(true);
-    setEditingId(product.id);
-    setFormData({
-      ...product,
-      expiration_date: product.expiration_date
-        ? product.expiration_date.split("T")[0]
-        : "",
-    });
-
-    handleSubmit();
-  };
-
-  let isActionPending = {
-    isCreate: createProductHandler.isPending,
-    isUpdate: updateProductHandler.isPending,
-    message: createProductHandler.isPending
-      ? "la creacion de un producto esta tomando mucho tiempo, por favor espere o recargue la pagina"
-      : (updateProductHandler.isPending ??
-        "la actualizacion de un producto esta tomando mucho tiempo, por favor espere o recargue la pagina"),
   };
 
   const filteredProducts = useMemo(() => {
@@ -151,15 +151,50 @@ const ProductsPage = () => {
   }, [products, search]);
 
   const handleOpenModal = (
-    product: CreateProduct,
-    id: string,
+    product: ProductsResponseData,
     mode: "view" | "edit" | "increase_stock",
   ) => {
+    setEditingId(product.id);
     setHandleModal(mode);
+
+    if (mode === "view" || mode === "edit") {
+      if (mode === "edit") setIsEditing(true);
+
+      const formatted: FormattingProduct = product;
+
+      setFormData({
+        ...formatted,
+        expiration_date: product.expiration_date
+          ? product.expiration_date.split("T")[0]
+          : "",
+      });
+    }
+    if (mode === "increase_stock") {
+      setFormData({
+        ...initialProductValues,
+        name: product.name,
+        current_stock: 0,
+      });
+    };
+
+  };
+
+  let isActionPending = {
+    isCreate: createProductHandler.isPending,
+    isUpdate: updateProductHandler.isPending,
+    message: createProductHandler.isPending
+      ? "la creacion de un producto esta tomando mucho tiempo, por favor espere o recargue la pagina"
+      : (updateProductHandler.isPending ??
+        "la actualizacion de un producto esta tomando mucho tiempo, por favor espere o recargue la pagina"),
   };
 
   return (
     <div className="space-y-5 font-sans">
+      {isError && (
+        <div>
+
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-background-dinamyc-general">
@@ -252,10 +287,17 @@ const ProductsPage = () => {
                   </div>
 
                   <div className="flex items-center justify-center gap-2">
-                    <button type="button"></button>
-                    <button type="button"></button>
-                    <button type="button"></button>
-                    <button type="button"></button>
+                    <button type="button">
+                      <i className="" />
+                    </button>
+                    <button type="button">
+                      <i className="" />
+                    </button>
+                    {user?.rol === "ADMIN" && (
+                      <button type="button">
+                        <i className="" />
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -263,6 +305,15 @@ const ProductsPage = () => {
           )}
         </div>
       </div>
+      <DinamycForm
+        isOpen={active}
+        setIsOpen={setActive}
+        title=""
+        >
+          <form action="">
+            
+          </form>
+      </DinamycForm>
     </div>
   );
 };

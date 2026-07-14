@@ -143,7 +143,7 @@ export interface KpisInterface {
 export interface CreateProduct {
     name: string;
     bars_code: string;
-    lote?: string;
+    lote: string | null;
     expiration_date: string;
     unity_price: number;
     limit_minor_adquirition?: number;
@@ -153,6 +153,9 @@ export interface CreateProduct {
     minimun_stock?: number;
     active?: boolean;
 }
+
+
+export type FormattingProduct = Omit<ProductsResponseData, 'id' | 'createdAt' | 'updatedAt'>
 
 /**
  * export interface ProductsResponseData {
