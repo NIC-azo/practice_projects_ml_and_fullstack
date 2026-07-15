@@ -56,6 +56,7 @@ const ProductsPage = () => {
     setIsEditing(false);
     setEditingId(null);
     setHandleModal("view");
+    setActive(false);
   };
 
   const createProductHandler = useMutation<
@@ -195,6 +196,35 @@ const ProductsPage = () => {
 
         </div>
       )}
+      {
+        editingId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex items-center justify-center px-6 py-4 border-b border-gray-200 shadow-background-dark/25">
+                {handleModal === "increase_stock" && (<> <i className="fa-solid fa-angles-up bg-background-buttons/50 text-background-emojis-color"/> <h3 className="text-xl font-semibold text-color-text-general">Incrementar Stock</h3> </>)}
+                {handleModal === "edit" && (<><i className="fa-solid fa-pen-to-square bg-background-buttons/50 text-background-emojis-color"/> <h3 className="text-xl font-semibold text-color-text-general">Editar Producto</h3></>)}
+                {handleModal === "view" && (<><i className="fa-solid fa-eye bg-background-buttons/50 text-background-emojis-color"/> <h3 className="text-xl font-semibold text-color-text-general">Visualizar Datos del Producto</h3></>)}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {handleModal === "increase_stock" ? (
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">Ingresar la cantidad de Stock</label>
+                    <input className="" 
+                      type="number" placeholder="ingresar enteros o decimal" 
+                      onChange={(e) => setFormData({...formData, current_stock: Number(e.target.value)})}
+                      value={formData.current_stock}
+                      />
+                  </div>
+                ) : (
+                  <div>
+
+                  </div>
+                )}
+              </div>
+            </form>
+          </div>
+        )
+      }
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-background-dinamyc-general">
