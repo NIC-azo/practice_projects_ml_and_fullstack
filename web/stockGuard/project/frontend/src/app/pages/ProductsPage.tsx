@@ -122,7 +122,10 @@ const ProductsPage = () => {
         setFormError("El valor a incrementar debe ser mayor a 0");
         return;
       }
-      increaseStockHandler.mutate({id: editingId, newStock: formData.current_stock ?? 0});
+      increaseStockHandler.mutate({
+        id: editingId,
+        newStock: formData.current_stock ?? 0,
+      });
       return;
     }
 
@@ -134,9 +137,9 @@ const ProductsPage = () => {
     };
 
     if (editingId && isEditing) {
-      updateProductHandler.mutate({id: editingId, data: formEnhanced});
+      updateProductHandler.mutate({ id: editingId, data: formEnhanced });
     } else {
-      createProductHandler.mutate(formEnhanced)
+      createProductHandler.mutate(formEnhanced);
     }
   };
 
@@ -176,8 +179,7 @@ const ProductsPage = () => {
         name: product.name,
         current_stock: 0,
       });
-    };
-
+    }
   };
 
   let isActionPending = {
@@ -191,40 +193,288 @@ const ProductsPage = () => {
 
   return (
     <div className="space-y-5 font-sans">
-      {isError && (
-        <div>
-
+      {isError && <div></div>}
+      {editingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex items-center justify-center px-6 py-4 border-b border-gray-200 shadow-background-dark/25">
+              {handleModal === "increase_stock" && (
+                <>
+                  <i className="fa-solid fa-angles-up bg-background-buttons/50 text-background-emojis-color" />{" "}
+                  <h3 className="text-xl font-semibold text-color-text-general">
+                    Incrementar Stock
+                  </h3>
+                </>
+              )}
+              {handleModal === "edit" && (
+                <>
+                  <i className="fa-solid fa-pen-to-square bg-background-buttons/50 text-background-emojis-color" />{" "}
+                  <h3 className="text-xl font-semibold text-color-text-general">
+                    Editar Producto
+                  </h3>
+                </>
+              )}
+              {handleModal === "view" && (
+                <>
+                  <i className="fa-solid fa-eye bg-background-buttons/50 text-background-emojis-color" />{" "}
+                  <h3 className="text-xl font-semibold text-color-text-general">
+                    Visualizar Datos del Producto
+                  </h3>
+                </>
+              )}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {handleModal === "increase_stock" ? (
+                <div>
+                  <label className="block text-sm font-medium text-color-text-general mb-1">
+                    Ingresar la cantidad de Stock
+                  </label>
+                  <input
+                    className=""
+                    type="number"
+                    placeholder="ingresar enteros o decimal"
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        current_stock: Number(e.target.value),
+                      })
+                    }
+                    value={formData.current_stock}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Nombre
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.name}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
+                        type="text"
+                        placeholder="nombre del producto"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Codigo de Barras
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.bars_code}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.bars_code}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            bars_code: e.target.value,
+                          })
+                        }
+                        type="text"
+                        placeholder="codigo de barra"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Lote
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.lote}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.lote ?? ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            lote: e.target.value,
+                          })
+                        }
+                        type="text"
+                        placeholder="lote"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Fecha de expiracion
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.expiration_date}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={Intl.DateTimeFormat("es-PE", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          timeZone: "UTC",
+                        }).format(new Date(formData.expiration_date))}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            lote: e.target.value,
+                          })
+                        }
+                        type="date"
+                        placeholder="formato (YY/MM/DD)"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Precio Unitario
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.unity_price}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.unity_price.toFixed(2)}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            unity_price: Number(e.target.value),
+                          })
+                        }
+                        type="number"
+                        placeholder="ingrese precio unitario"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      limite de adquisicion por menor (opcional)
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.limit_minor_adquirition ?? 0}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.limit_minor_adquirition}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            limit_minor_adquirition: Number(e.target.value),
+                          })
+                        }
+                        type="number"
+                        placeholder="ingrese limite de adquisicion de producto"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Precio al por Menor
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.minorsale_price}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.minorsale_price}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            minorsale_price: Number(e.target.value),
+                          })
+                        }
+                        type="number"
+                        placeholder="ingrese el precio al por menor"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Precio al por Mayor
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.wholesale_price}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.wholesale_price}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            wholesale_price: Number(e.target.value),
+                          })
+                        }
+                        type="number"
+                        placeholder="ingrese el precio al por mayor"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Stock Actual (opcional)
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.current_stock}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.current_stock}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            current_stock: Number(e.target.value),
+                          })
+                        }
+                        type="number"
+                        placeholder="ingrese stock actual (esto no incrementa el stock)"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-color-text-general mb-1">
+                      Stock Minimo (opcional)
+                    </label>
+                    {handleModal === "view" ? (
+                      <p>{formData.minimun_stock}</p>
+                    ) : (
+                      <input
+                        className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
+                                border-sky-500 text-color-text-button/80"
+                        value={formData.minimun_stock}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            minimun_stock: Number(e.target.value),
+                          })
+                        }
+                        type="number"
+                        placeholder="ingrese un minimo para diferenciar el stock (esto no incrementa el stock)"
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+              <div>
+                <button onClick={clearFields} type="button"><i className="fa-solid fa-rectangle-xmark"/>Cerrar/Cancelar</button>
+              </div>
+            </div>
+          </form>
         </div>
       )}
-      {
-        editingId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex items-center justify-center px-6 py-4 border-b border-gray-200 shadow-background-dark/25">
-                {handleModal === "increase_stock" && (<> <i className="fa-solid fa-angles-up bg-background-buttons/50 text-background-emojis-color"/> <h3 className="text-xl font-semibold text-color-text-general">Incrementar Stock</h3> </>)}
-                {handleModal === "edit" && (<><i className="fa-solid fa-pen-to-square bg-background-buttons/50 text-background-emojis-color"/> <h3 className="text-xl font-semibold text-color-text-general">Editar Producto</h3></>)}
-                {handleModal === "view" && (<><i className="fa-solid fa-eye bg-background-buttons/50 text-background-emojis-color"/> <h3 className="text-xl font-semibold text-color-text-general">Visualizar Datos del Producto</h3></>)}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {handleModal === "increase_stock" ? (
-                  <div>
-                    <label className="block text-sm font-medium text-color-text-general mb-1">Ingresar la cantidad de Stock</label>
-                    <input className="" 
-                      type="number" placeholder="ingresar enteros o decimal" 
-                      onChange={(e) => setFormData({...formData, current_stock: Number(e.target.value)})}
-                      value={formData.current_stock}
-                      />
-                  </div>
-                ) : (
-                  <div>
-
-                  </div>
-                )}
-              </div>
-            </form>
-          </div>
-        )
-      }
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-background-dinamyc-general">
@@ -265,13 +515,14 @@ const ProductsPage = () => {
       </div>
       <div className="rounded-xl border overflow-hidden bg-purple-500 border-background-buttons/40">
         <div
-          className="grid grid-cols-[2fr_1.2fr_1fr_1fr_1fr] gap-4 bg-sky-700/75 backdrop-blur-sm
+          className="grid grid-cols-[2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 bg-sky-700/75 backdrop-blur-sm
         p-4 text-color-text-general border-b border-white/20 font-semibold text-sm"
         >
           <div className="text-center">Producto</div>
           <div className="text-center">Código</div>
           <div className="text-center">P. menor</div>
           <div className="text-center">Stock</div>
+          <div className="text-center">Fechas</div>
           <div className="text-center">Acciones</div>
         </div>
         <div className="divide-y divide-background-emojis-color/60">
@@ -316,16 +567,21 @@ const ProductsPage = () => {
                     {p.current_stock ?? "-"}
                   </div>
 
+                  <div className="flex items-center justify-between font-mono text-color-text-general">
+                    <p className="font-mono"><i className="fa-solid fa-calendar-plus"/> {Intl.DateTimeFormat('es-PE', {day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC"}).format(new Date(p.createdAt))}</p>
+                    <p className="font-mono"><i className="fa-solid fa-pen-nib"/> {Intl.DateTimeFormat('es-PE', {day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC"}).format(new Date(p.updatedAt))}</p>
+                  </div>
+
                   <div className="flex items-center justify-center gap-2">
                     <button type="button">
-                      <i className="" />
+                      <i className="fa-solid fa-ellipsis" />
                     </button>
                     <button type="button">
-                      <i className="" />
+                      <i className="fa-solid fa-angles-up" />
                     </button>
                     {user?.rol === "ADMIN" && (
                       <button type="button">
-                        <i className="" />
+                        <i className="fa-solid fa-trash-can" />
                       </button>
                     )}
                   </div>
@@ -335,14 +591,8 @@ const ProductsPage = () => {
           )}
         </div>
       </div>
-      <DinamycForm
-        isOpen={active}
-        setIsOpen={setActive}
-        title=""
-        >
-          <form action="">
-            
-          </form>
+      <DinamycForm isOpen={active} setIsOpen={setActive} title="">
+        <form action=""></form>
       </DinamycForm>
     </div>
   );

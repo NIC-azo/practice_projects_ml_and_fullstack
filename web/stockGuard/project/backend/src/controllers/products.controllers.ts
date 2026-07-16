@@ -18,8 +18,8 @@ class ProductsController {
             return ApiResponse.errorOperations(res, 
                 "no se envio los datos requeridos para crear el producto");
         }
-        if (!restOfBody.name || !restOfBody.bars_code || !restOfBody.unity_price || !restOfBody.minorsale_price || !restOfBody.wholesale_price) {
-            return ApiResponse.errorOperations(res, "Faltan campos obligatorios: name, bars_code, unity_price, minorsale_price y wholesale_price son requeridos.", 400)
+        if (!restOfBody.expiration_date || !restOfBody.name || !restOfBody.bars_code || !restOfBody.unity_price || !restOfBody.minorsale_price || !restOfBody.wholesale_price) {
+            return ApiResponse.errorOperations(res, "Faltan campos obligatorios: name, bars_code, expiration date, unity_price, minorsale_price y wholesale_price son requeridos.", 400)
         }
 
         if (String(restOfBody.bars_code)) {
@@ -30,7 +30,8 @@ class ProductsController {
             }
         }
         const productConverted: modelProducts = {
-            ...restOfBody
+            ...restOfBody,
+            expiration_date: new Date(`${restOfBody.expiration_date}T00:00:00Z`),
         }
         const productCreated = await productsModel.createProduct(productConverted);
         if (!productCreated.id || productCreated === undefined) {
