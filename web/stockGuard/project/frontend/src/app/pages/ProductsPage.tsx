@@ -9,7 +9,7 @@ import { useMemo, useState } from "react";
 import DinamycForm from "@/app/components/ui/form/DinamycForm";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth.store";
-import { data } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 const initialProductValues: CreateProduct = {
   name: "",
@@ -31,7 +31,6 @@ const ProductsPage = () => {
     data: products = [],
     isLoading,
     isError,
-    error,
   } = useQuery<ProductsResponseData[], CustomApiError>({
     queryKey: ["products"],
     queryFn: async () => {
@@ -42,6 +41,7 @@ const ProductsPage = () => {
   });
   const [formData, setFormData] = useState<CreateProduct>(initialProductValues);
   const { user } = useAuthStore();
+  const location = useLocation();
   const [active, setActive] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -69,7 +69,19 @@ const ProductsPage = () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
-    onError: (error) => setFormError(error.message),
+    onError: (error) => {
+      if (error.isNetworkError) {
+        setFormError("Error de conexion con el servidor, intentelo mas tarde")
+      } else if (error.status === 401) {
+        setFormError("su sesion a expirado, intente iniciar sesion");
+        <Navigate to={"/login"} state={{from: location}} replace/>
+      } else if (error.status === 403) {
+        setFormError("no estas permitido para realizar esta accion");
+        <Navigate to={"/unauthorized"} replace/>
+      } else {
+        setFormError(error.message)
+      }
+    },
   });
 
   const updateProductHandler = useMutation<
@@ -83,7 +95,7 @@ const ProductsPage = () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
-    onError: (error) => setFormError(error.message),
+    onError: (error) => {setFormError(error.message)},
   });
 
   const increaseStockHandler = useMutation<
@@ -97,7 +109,7 @@ const ProductsPage = () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
-    onError: (error) => setFormError(error.message),
+    onError: (error) => {setFormError(error.message)},
   });
 
   const deleteProductHandler = useMutation<
@@ -110,7 +122,7 @@ const ProductsPage = () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
-    onError: (error) => setFormError(error.message),
+    onError: (error) => {setFormError(error.message)},
   });
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -182,18 +194,34 @@ const ProductsPage = () => {
     }
   };
 
-  let isActionPending = {
+  const isActionPending = {
     isCreate: createProductHandler.isPending,
     isUpdate: updateProductHandler.isPending,
     message: createProductHandler.isPending
       ? "la creacion de un producto esta tomando mucho tiempo, por favor espere o recargue la pagina"
-      : (updateProductHandler.isPending ??
-        "la actualizacion de un producto esta tomando mucho tiempo, por favor espere o recargue la pagina"),
+      : "la actualizacion de un producto esta tomando mucho tiempo, por favor espere o recargue la pagina",
   };
+
+  if (isLoading){ 
+    return <div></div>;
+  }
 
   return (
     <div className="space-y-5 font-sans">
-      {isError && <div></div>}
+      {isError && formError.length > 0 && 
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/75 p-4 
+          animate-fade-in-form-modal duration-200"
+          >
+            <div className="relative w-full max-w-md bg-background-emojis-color-alert p-6 rounded-2xl shadow-blur-for-shadows">
+              <button type="button" onClick={() => setFormError("")}>
+                <i className="fa-solid fa-square-xmark text-xl text-background-emojis-color-alert hover:text-background-emojis-color-alert/60"/>
+              </button>
+              <div className="pr-6">
+                <p className="text-lg font-bold text-color-text-general leading-snug">{formError}</p>
+              </div>
+            </div>
+        </div>
+      }
       {editingId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -468,9 +496,41 @@ const ProductsPage = () => {
                   </div>
                 </>
               )}
-              <div>
-                <button onClick={clearFields} type="button"><i className="fa-solid fa-rectangle-xmark"/>Cerrar/Cancelar</button>
-              </div>
+            </div>
+            <div className="flex justify-center gap-2">
+              <button onClick={clearFields} type="button">
+                <i className="fa-solid fa-rectangle-xmark text-background-emojis-color" />
+                Cerrar/Cancelar
+              </button>
+              {handleModal === "view" && user?.rol === "ADMIN" && (
+                <button
+                  type="button"
+                  onClick={() => setHandleModal("edit")}
+                >
+                  <i className="fa-solid fa-pen-to-square text-background-emojis-color"/>
+                  Editar
+                </button>
+              )}
+              {handleModal !== "view" && (
+                <button
+                  type="submit"
+                  disabled={
+                    isActionPending.isCreate ||
+                    isActionPending.isUpdate ||
+                    increaseStockHandler.isPending
+                  }
+                  aria-label={
+                    isActionPending.isCreate || isActionPending.isUpdate
+                      ? isActionPending.message
+                      : increaseStockHandler.isPending
+                        ? "la accion de incrementar stock esta tomando mas tiempo, espere por favor"
+                        : "una accion llevada a cabo recientemente esta tomando mas tiempo, reinicie el sistema o contacte soporte tecnico"
+                  }
+                >
+                  <i className="fa-solid fa-circle-check text-background-emojis-color"/>
+                  Guardar Cambios
+                </button>
+              )}
             </div>
           </form>
         </div>
@@ -481,7 +541,7 @@ const ProductsPage = () => {
             Gestión de Productos
           </h1>
           <p className="text-sm mt-0.5 text-background-dinamyc-general/70">
-            {data.length} productos registrados
+            {products.length} productos registrados
           </p>
         </div>
         <button
@@ -568,20 +628,37 @@ const ProductsPage = () => {
                   </div>
 
                   <div className="flex items-center justify-between font-mono text-color-text-general">
-                    <p className="font-mono"><i className="fa-solid fa-calendar-plus"/> {Intl.DateTimeFormat('es-PE', {day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC"}).format(new Date(p.createdAt))}</p>
-                    <p className="font-mono"><i className="fa-solid fa-pen-nib"/> {Intl.DateTimeFormat('es-PE', {day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC"}).format(new Date(p.updatedAt))}</p>
+                    <p className="font-mono">
+                      <i className="fa-solid fa-calendar-plus" />{" "}
+                      {Intl.DateTimeFormat("es-PE", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        timeZone: "UTC",
+                      }).format(new Date(p.createdAt))}
+                    </p>
+                    <p className="font-mono">
+                      <i className="fa-solid fa-pen-nib" />{" "}
+                      {Intl.DateTimeFormat("es-PE", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        timeZone: "UTC",
+                      }).format(new Date(p.updatedAt))}
+                    </p>
                   </div>
 
                   <div className="flex items-center justify-center gap-2">
-                    <button type="button">
-                      <i className="fa-solid fa-ellipsis" />
+                    <button type="button" aria-label="ver mas" onClick={() => handleOpenModal(p, "view")}>
+                      <i className="fa-solid fa-ellipsis text-background-emojis-color" />
                     </button>
-                    <button type="button">
-                      <i className="fa-solid fa-angles-up" />
+                    <button type="button" aria-label="incrementar stock" onClick={() => handleOpenModal(p, "increase_stock")}>
+                      <i className="fa-solid fa-angles-up text-background-emojis-color" />
+                      stock
                     </button>
                     {user?.rol === "ADMIN" && (
-                      <button type="button">
-                        <i className="fa-solid fa-trash-can" />
+                      <button type="button" aria-label="eliminar producto" onClick={() => deleteProductHandler.mutate({id: p.id})}>
+                        <i className="fa-solid fa-trash-can text-background-emojis-color-alert" />
                       </button>
                     )}
                   </div>
@@ -592,7 +669,9 @@ const ProductsPage = () => {
         </div>
       </div>
       <DinamycForm isOpen={active} setIsOpen={setActive} title="">
-        <form action=""></form>
+        <form onSubmit={handleSubmit}>
+
+        </form>
       </DinamycForm>
     </div>
   );
