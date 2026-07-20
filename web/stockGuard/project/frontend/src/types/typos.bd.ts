@@ -1,5 +1,5 @@
 export type Rol = 'ADMIN' | 'ALMACENERO';
-
+export type VoucherType =  "BOLETA" | "FACTURA";
 export interface UserForTypos {
     userId: string;
     rol: Rol;
@@ -56,6 +56,14 @@ export interface ClientsResponseData {
     cellPhone: string | null;
 }
 
+export interface ClientsManagement {
+    name: string;
+    email: string | null;
+    dni: string | null;
+    ruc: string | null;
+    cellphone: string | null;
+}
+
 export interface UsersResponseData {
     name: string;
     id: string;
@@ -63,6 +71,13 @@ export interface UsersResponseData {
     rol: Rol;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface UserManagement {
+    name: string;
+    email: string;
+    password: string;
+    rol: Rol | null;
 }
 
 export interface ProductsResponseData {
@@ -157,21 +172,11 @@ export interface CreateProduct {
 
 export type FormattingProduct = Omit<ProductsResponseData, 'id' | 'createdAt' | 'updatedAt'>
 
-/**
- * export interface ProductsResponseData {
-    name: string;
-    id: string;
-    active: boolean;
-    createdAt: string;
-    updatedAt: string;
-    bars_code: string;
-    lote: string | null;
-    expiration_date: string;
-    unity_price: number;
-    limit_minor_adquirition: number;
-    minorsale_price: number;
-    wholesale_price: number;
-    current_stock: number;
-    minimun_stock: number;
+export interface BeginSell {
+    clientId: string;
+    typeVoucher: VoucherType;
+    itemsSelected: Array<{
+        productId: string;
+        quantity: number;
+    }>
 }
- */

@@ -178,8 +178,10 @@ const ProductsPage = () => {
 
     if (editingId && (handleModal === "edit" || isEditing)) {
       updateProductHandler.mutate({ id: editingId, data: formEnhanced });
+      return;
     } else {
       createProductHandler.mutate(formEnhanced);
+      return;
     }
   };
 
