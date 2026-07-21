@@ -172,7 +172,12 @@ export interface CreateProduct {
 
 export type FormattingProduct = Omit<ProductsResponseData, 'id' | 'createdAt' | 'updatedAt'>
 
-export interface BeginSell {
+export interface CartItem {
+    product: CreateProduct & {id: string};
+    quantity: number;
+}
+
+export interface BeginInitSell {
     clientId: string;
     typeVoucher: VoucherType;
     itemsSelected: Array<{
