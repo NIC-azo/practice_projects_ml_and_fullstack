@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import DinamycForm from "@/app/components/ui/form/DinamycForm";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth.store";
+import type { AxiosResponse } from "axios";
 
 const initialProductValues: CreateProduct = {
   name: "",
@@ -33,7 +34,8 @@ const ProductsPage = () => {
   } = useQuery<ProductsResponseData[], CustomApiError>({
     queryKey: ["products"],
     queryFn: async () => {
-      return await request<ProductsResponseData[]>("get", "/products/");
+      const res = await request("get", "/products/");
+      return Array.isArray(res) ? res : ((res as AxiosResponse).data ?? []);
     },
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
@@ -262,10 +264,10 @@ const ProductsPage = () => {
       {editingId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex items-center justify-center px-6 py-4 border-b border-gray-200 shadow-background-dark/25">
+            <div className="flex items-center justify-center px-6 py-4 border-b border-gray-200 shadow-black/40">
               {handleModal === "increase_stock" && (
                 <>
-                  <i className="fa-solid fa-angles-up bg-background-buttons/50 text-background-emojis-color" />{" "}
+                  <i className="fa-solid fa-angles-up bg-bg text-background-emojis-color" />{" "}
                   <h3 className="text-xl font-semibold text-color-text-general">
                     Incrementar Stock
                   </h3>

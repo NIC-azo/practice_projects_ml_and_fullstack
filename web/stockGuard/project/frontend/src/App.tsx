@@ -10,17 +10,20 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-function App() {
-  const navigate = useNavigate();
+// 1. Creamos un componente interno que está DENTRO del BrowserRouter
+function QueryProviderWithRouter() {
+  const navigate = useNavigate(); // ✅ Ahora es 100% seguro porque BrowserRouter ya existe arriba
   const location = useLocation();
   const { logout } = useAuthStore();
 
+  // Inicializamos el QueryClient aquí adentro para vincular las redirecciones globales
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
       onError: (error: any) => {
         if (error.status === 401) {
           logout();
-          navigate("/logout", { state: { from: location }, replace: true });
+          // "/login" para el flujo de retorno
+          navigate("/login", { state: { from: location }, replace: true });
         } else if (error.status === 403) {
           navigate("/unauthorized", { replace: true });
         }
@@ -30,7 +33,7 @@ function App() {
       onError: (error: any) => {
         if (error.status === 401) {
           logout();
-          navigate("/logout", { state: { from: location }, replace: true });
+          navigate("/login", { state: { from: location }, replace: true });
         } else if (error.status === 403) {
           navigate("/unauthorized", { replace: true });
         }
@@ -39,11 +42,18 @@ function App() {
   });
 
   return (
+    <QueryClientProvider client={queryClient}>
+      <AppRouter />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+}
+
+// 2. El componente raíz solo se encarga de montar el Router general
+function App() {
+  return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <AppRouter />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <QueryProviderWithRouter />
     </BrowserRouter>
   );
 }

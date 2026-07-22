@@ -1,59 +1,46 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --color-background-dark: #ffffff;
-    --color-background-buttons: rgb(66, 43, 196);
-    --color-color-text-button: #ffffff;
-    --color-color-text-general: rgb(37, 52, 73);
-    --color-background-emojis-color: rgb(184, 186, 187);
-    --color-background-emojis-color-alert: rgb(238, 76, 76);
-    --color-background-emojis-admin-profile: rgb(241, 195, 40);
-    --color-background-dinamyc-general: rgb(226, 226, 226);
+    /* Fondos y Estructura */
+    --color-bg-main: #ffffff;
+    --color-bg-card: #f8fafc;
+    --color-bg-input: #f1f5f9;
+    --color-border-card: #e2e8f0;
 
-    --shadow-blur-for-shadows: 0 4px 6px -1px rgb(144, 143, 151);
+    /* Textos */
+    --color-text-main: #0f172a;
+    --color-text-muted: #64748b;
 
-    --animate-fade-in-form-modal: fade-in 0.5s ease-in;
-    --animate-fade-out-form-modal: fade-out 0.5s ease-out;
+    /* Botones y Acentos */
+    --color-btn-primary: #2563eb;
+    --color-btn-primary-text: #ffffff;
+    --color-alert: #ef4444;
 
-    @keyframes fade-in {
-        0% {
-            opacity: 0;
-            transform: scaleY(0%);
-        }
-        100% {
-            opacity: 1;
-            transform: scaleY(100%)
-        }
-    }
-
-    @keyframes fade-out {
-        0% {
-            opacity: 1;
-            transform: scaleY(100%);
-        }
-        100% {
-            opacity: 0;
-            transform: scaleY(0%)
-        }
-    }
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .dark {
-    --color-background-dark: #080b14;
-    --color-background-buttons: #464646;
-    --color-color-text-button: #e2e2e2;
-    --color-color-text-general: rgb(75, 165, 248);
-    --color-background-emojis-color: rgb(43, 44, 44);
-    --color-background-emojis-color-alert: rgb(207, 19, 19);
-    --color-background-emojis-admin-profile: rgb(206, 160, 8);
-    --color-background-dinamyc-general: rgb(119, 117, 253);
-    
-    --shadow-blur-for-shadows: 0 4px 6px -1px rgb(170, 166, 201);
+    /* Fondos y Estructura */
+    --color-bg-main: #0b0f17;
+    --color-bg-card: #111827;
+    --color-bg-input: #1f2937;
+    --color-border-card: #374151;
+
+    /* Textos */
+    --color-text-main: #f9fafb;
+    --color-text-muted: #9ca3af;
+
+    /* Botones y Acentos */
+    --color-btn-primary: #3b82f6;
+    --color-btn-primary-text: #ffffff;
+    --color-alert: #f87171;
+
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 body {
-    background-color: var(--color-background-dark);
-    color: var(--color-color-text-general);
+    background-color: var(--color-bg-main);
+    color: var(--color-text-main);
     font-family: Arial, Helvetica, sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
