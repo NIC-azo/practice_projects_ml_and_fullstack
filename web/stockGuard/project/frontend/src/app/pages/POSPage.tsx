@@ -256,7 +256,7 @@ function POSPage() {
           </p>
         </div>
         <div className="relative">
-          <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-background-emojis-color text-lg" />
+          <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg" />
           <input
             value={productsSearch}
             onChange={(e) => setProductsSearch(e.target.value)}
@@ -279,10 +279,10 @@ function POSPage() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center">
-                    <i className="fa-solid fa-box-open text-lg text-background-emojis-color" />
+                    <i className="fa-solid fa-box-open text-lg text-gray-500" />
                   </div>
                   <div className="w-6 h-6 rounded-full bg-sky-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                    <i className="fa-solid fa-plus text-background-emojis-color text-lg" />
+                    <i className="fa-solid fa-plus text-blue-500 text-lg" />
                   </div>
                 </div>
                 <p className="text-sm font-medium leading-tight mb-1">
@@ -329,7 +329,7 @@ function POSPage() {
                 onClick={() => setClientSelected(null)}
                 className="text-gray-400 hover:text-white"
               >
-                <i className="fa-solid fa-x" />
+                <i className="fa-solid fa-x text-red-500" />
               </button>
             </div>
           ) : (
@@ -397,7 +397,7 @@ function POSPage() {
                     : "border-gray-800 bg-gray-950 text-gray-400 hover:text-white"
                 }`}
               >
-                <i className="fa-solid fa-receipt text-lg text-background-emojis-color" />{" "}
+                <i className="fa-solid fa-receipt text-lg text-gray-500" />{" "}
                 {v}
               </button>
             ))}
@@ -425,7 +425,7 @@ function POSPage() {
           <div className="flex-1 overflow-y-auto">
             {cart.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-32 gap-2 text-gray-500">
-                <i className="fa-solid fa-cart-shopping text-background-emojis-color opacity-40 text-lg" />
+                <i className="fa-solid fa-cart-shopping text-blue-500 opacity-40 text-lg" />
                 <p className="text-xs">Carrito vacío</p>
               </div>
             ) : (
@@ -448,7 +448,7 @@ function POSPage() {
                         onClick={() => removeFromCart(item.product.id)}
                         className="text-gray-500 hover:text-red-400"
                       >
-                        <i className="fa-solid fa-trash text-background-emojis-color text-lg" />
+                        <i className="fa-solid fa-trash text-gray-500 text-lg" />
                       </button>
                     </div>
                     <div className="flex items-center justify-between">
@@ -459,7 +459,7 @@ function POSPage() {
                           }
                           className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700"
                         >
-                          <i className="fa-solid fa-minus text-background-emojis-color text-lg" />
+                          <i className="fa-solid fa-minus text-gray-500 text-lg" />
                         </button>
                         <span className="w-8 text-center text-sm font-semibold font-mono">
                           {item.quantity}
@@ -470,7 +470,7 @@ function POSPage() {
                           }
                           className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700"
                         >
-                          <i className="fa-solid fa-plus text-background-emojis-color text-lg" />
+                          <i className="fa-solid fa-plus text-blue-500 text-lg" />
                         </button>
                       </div>
                       <div className="text-right">
@@ -524,7 +524,7 @@ function POSPage() {
             {beginSellMutation.isPending ? (
               <i className="fa-solid fa-spinner text-sky-500 animate-spin text-lg" />
             ) : (
-              <i className="fa-solid fa-credit-card text-background-emojis-color text-lg" />
+              <i className="fa-solid fa-credit-card text-gray-500 text-lg" />
             )}
             {beginSellMutation.isPending ? "Procesando..." : "Confirmar Venta"}
           </button>

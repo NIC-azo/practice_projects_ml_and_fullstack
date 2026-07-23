@@ -1,46 +1,133 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    /* Fondos y Estructura */
-    --color-bg-main: #ffffff;
-    --color-bg-card: #f8fafc;
-    --color-bg-input: #f1f5f9;
-    --color-border-card: #e2e8f0;
-
-    /* Textos */
-    --color-text-main: #0f172a;
+    /* ========== FONDOS - LIGHT THEME ========== */
+    --color-background-dinamyc-general: #ffffff;
+    --color-background-dark: #f8fafc;
+    --color-background-buttons: #e0e7ff;
+    --color-background-emojis-color: #f0f4f8;
+    --color-background-emojis-color-alert: #fee2e2;
+    
+    /* Fondos secundarios */
+    --color-bg-secondary: #f1f5f9;
+    --color-bg-tertiary: #e2e8f0;
+    --color-bg-success: #dcfce7;
+    --color-bg-warning: #fef3c7;
+    --color-bg-info: #dbeafe;
+    --color-bg-danger: #fecaca;
+    
+    /* ========== TEXTOS - LIGHT THEME ========== */
+    --color-text-general: #0f172a;
+    --color-text-secondary: #334155;
     --color-text-muted: #64748b;
-
-    /* Botones y Acentos */
-    --color-btn-primary: #2563eb;
-    --color-btn-primary-text: #ffffff;
-    --color-alert: #ef4444;
-
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --color-text-button: #1e293b;
+    --color-text-success: #166534;
+    --color-text-warning: #854d0e;
+    --color-text-info: #0c4a6e;
+    --color-text-danger: #b91c1c;
+    
+    /* ========== BORDES - LIGHT THEME ========== */
+    --color-border-card: #e2e8f0;
+    --color-border-input: #cbd5e1;
+    --color-border-focus: #3b82f6;
+    --color-border-success: #86efac;
+    --color-border-warning: #fcd34d;
+    --color-border-danger: #fca5a5;
+    
+    /* ========== SOMBRAS ========== */
+    --shadow-blur-for-shadows: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    --shadow-lift: 0 10px 15px -3px rgba(0, 0, 0, 0.12);
+    --shadow-subtle: 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    
+    /* ========== ACENTOS ========== */
+    --color-primary: #3b82f6;
+    --color-primary-hover: #2563eb;
+    --color-secondary: #6366f1;
+    --color-accent: #ec4899;
 }
 
 .dark {
-    /* Fondos y Estructura */
-    --color-bg-main: #0b0f17;
-    --color-bg-card: #111827;
-    --color-bg-input: #1f2937;
-    --color-border-card: #374151;
-
-    /* Textos */
-    --color-text-main: #f9fafb;
+    /* ========== FONDOS - DARK THEME ========== */
+    --color-background-dinamyc-general: #0f172a;
+    --color-background-dark: #111827;
+    --color-background-buttons: #1e3a8a;
+    --color-background-emojis-color: #1f2937;
+    --color-background-emojis-color-alert: #7f1d1d;
+    
+    /* Fondos secundarios */
+    --color-bg-secondary: #1f2937;
+    --color-bg-tertiary: #374151;
+    --color-bg-success: #064e3b;
+    --color-bg-warning: #78350f;
+    --color-bg-info: #082f49;
+    --color-bg-danger: #7f1d1d;
+    
+    /* ========== TEXTOS - DARK THEME ========== */
+    --color-text-general: #f9fafb;
+    --color-text-secondary: #e5e7eb;
     --color-text-muted: #9ca3af;
-
-    /* Botones y Acentos */
-    --color-btn-primary: #3b82f6;
-    --color-btn-primary-text: #ffffff;
-    --color-alert: #f87171;
-
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --color-text-button: #f0f9ff;
+    --color-text-success: #86efac;
+    --color-text-warning: #fcd34d;
+    --color-text-info: #93c5fd;
+    --color-text-danger: #fca5a5;
+    
+    /* ========== BORDES - DARK THEME ========== */
+    --color-border-card: #374151;
+    --color-border-input: #4b5563;
+    --color-border-focus: #60a5fa;
+    --color-border-success: #22c55e;
+    --color-border-warning: #eab308;
+    --color-border-danger: #f87171;
+    
+    /* ========== SOMBRAS ========== */
+    --shadow-blur-for-shadows: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lift: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-subtle: 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+    
+    /* ========== ACENTOS ========== */
+    --color-primary: #60a5fa;
+    --color-primary-hover: #93c5fd;
+    --color-secondary: #818cf8;
+    --color-accent: #f472b6;
 }
 
 body {
-    background-color: var(--color-bg-main);
-    color: var(--color-text-main);
+    background-color: var(--color-background-dinamyc-general);
+    color: var(--color-text-general);
     font-family: Arial, Helvetica, sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* ========== UTILIDADES PARA COLORES ========== */
+.bg-background-dinamyc-general { background-color: var(--color-background-dinamyc-general); }
+.bg-background-dark { background-color: var(--color-background-dark); }
+.bg-background-buttons { background-color: var(--color-background-buttons); }
+.bg-background-emojis-color { background-color: var(--color-background-emojis-color); }
+.bg-background-emojis-color-alert { background-color: var(--color-background-emojis-color-alert); }
+
+.text-color-text-general { color: var(--color-text-general); }
+.text-color-text-secondary { color: var(--color-text-secondary); }
+.text-color-text-muted { color: var(--color-text-muted); }
+.text-color-text-button { color: var(--color-text-button); }
+.text-color-text-success { color: var(--color-text-success); }
+.text-color-text-warning { color: var(--color-text-warning); }
+.text-color-text-info { color: var(--color-text-info); }
+.text-color-text-danger { color: var(--color-text-danger); }
+
+.border-color-border-card { border-color: var(--color-border-card); }
+.border-color-border-input { border-color: var(--color-border-input); }
+.border-color-border-focus { border-color: var(--color-border-focus); }
+
+.bg-color-bg-secondary { background-color: var(--color-bg-secondary); }
+.bg-color-bg-success { background-color: var(--color-bg-success); }
+.bg-color-bg-warning { background-color: var(--color-bg-warning); }
+.bg-color-bg-info { background-color: var(--color-bg-info); }
+.bg-color-bg-danger { background-color: var(--color-bg-danger); }
+
+.shadow-blur-for-shadows { box-shadow: var(--shadow-blur-for-shadows); }
+.shadow-card { box-shadow: var(--shadow-card); }
+.shadow-lift { box-shadow: var(--shadow-lift); }
+.shadow-subtle { box-shadow: var(--shadow-subtle); }

@@ -64,9 +64,6 @@ class ProductsModel {
         return await prismaInstance.products.update({
             where: {
                 id: id,
-                AND: {
-                    active: true,
-                },
             },
             data: {
                 active: false,

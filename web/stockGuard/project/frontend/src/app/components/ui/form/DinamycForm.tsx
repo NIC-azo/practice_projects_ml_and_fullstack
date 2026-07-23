@@ -46,16 +46,16 @@ const DinamycForm = (
                 animate-fade-in-form-modal duration-200
                 `}>
                 <div
-                    className="flex items-center justify-center px-6 py-4 border-b border-gray-200 shadow-background-dark/25">
-                    <h3 className="text-xl font-semibold bg-color-text-general">
+                    className="flex items-center justify-between px-6 py-4 border-b border-color-border-card shadow-card">
+                    <h3 className="text-xl font-semibold text-color-text-general">
                         {title}
                     </h3>
                     <button
-                        className="bg-background-emojis-color-alert hover:bg-red-700 rounded-lg p-2"
+                        className="bg-background-emojis-color-alert hover:bg-color-bg-danger rounded-lg p-2 transition-colors"
                         type="button"
                         onClick={() => setIsOpen(false)}
                         aria-label="cancelar">
-                        <i className="fa-solid fa-x bg-color-text-button hover:bg-white/20 ease-in duration-100 text-xl"/>
+                        <i className="fa-solid fa-x text-color-text-danger hover:text-color-text-button ease-in duration-100 text-xl"/>
                     </button>
                 </div>
                 <div className="flex-1 overflow-y-auto px-6 py-4"> 
