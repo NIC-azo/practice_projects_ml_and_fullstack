@@ -65,8 +65,8 @@ const ProductsPage = () => {
     CreateProduct
   >({
     mutationFn: (newProduct) => request("post", "/products/create", newProduct),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
     onError: (error) => {
@@ -89,8 +89,8 @@ const ProductsPage = () => {
   >({
     mutationFn: ({ id, data }) =>
       request("put", `/products/update/${id}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
     onError: (error) => {
@@ -113,8 +113,8 @@ const ProductsPage = () => {
   >({
     mutationFn: ({ id, newStock }) =>
       request("put", `/products/updateStock/${id}`, { newStock: newStock }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       clearFields();
     },
     onError: (error) => {
@@ -174,7 +174,7 @@ const ProductsPage = () => {
     //  Quitamos el new Date().toISOString() y pasamos la fecha limpia
     const formEnhanced = {
       ...formData,
-      expiration_date: formData.expiration_date ? formData.expiration_date : "",
+      expiration_date: formData.expiration_date ? new Date(formData.expiration_date).toISOString() : "",
     };
 
     if (editingId && (handleModal === "edit" || isEditing)) {
@@ -410,7 +410,7 @@ const ProductsPage = () => {
                           type="number"
                           min="1"
                           required
-                          value={formData.current_stock || ""}
+                          value={formData.current_stock || 0}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
@@ -849,74 +849,73 @@ const ProductsPage = () => {
                     </div>
                   </div>
                 )}
-              </form>
-
-              {/* FOOTER CON ACCIONES */}
-              <div
-                className="flex items-center justify-end gap-3 px-6 py-4 border-t"
-                style={{
-                  borderColor: "var(--color-border-card)",
-                  backgroundColor: "var(--color-background-dark)",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={clearFields}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80 cursor-pointer"
+                {/* FOOTER CON ACCIONES */}
+                <div
+                  className="flex items-center justify-between gap-3 px-6 py-4 border-t"
                   style={{
-                    backgroundColor:
-                      "var(--color-background-emojis-color-alert)",
-                    color: "var(--color-text-danger)",
+                    borderColor: "var(--color-border-card)",
+                    backgroundColor: "var(--color-background-dark)",
                   }}
                 >
-                  <i className="fa-solid fa-xmark" />
-                  Cancelar
-                </button>
-
-                {handleModal === "view" && user?.rol === "ADMIN" && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setIsEditing(true);
-                      setHandleModal("edit");
-                    }}
+                    onClick={clearFields}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80 cursor-pointer"
                     style={{
-                      backgroundColor: "var(--color-background-buttons)",
-                      color: "var(--color-text-general)",
+                      backgroundColor:
+                        "var(--color-background-emojis-color-alert)",
+                      color: "var(--color-text-danger)",
                     }}
                   >
-                    <i className="fa-solid fa-pen-to-square" />
-                    Editar
+                    <i className="fa-solid fa-xmark" />
+                    Cancelar
                   </button>
-                )}
 
-                {handleModal !== "view" && (
-                  <button
-                    type="submit"
-                    disabled={
-                      isActionPending.isCreate ||
-                      isActionPending.isUpdate ||
-                      increaseStockHandler.isPending
-                    }
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{
-                      backgroundColor: "var(--color-bg-success)",
-                      color: "white",
-                    }}
-                    aria-label={
-                      isActionPending.isCreate || isActionPending.isUpdate
-                        ? isActionPending.message
-                        : increaseStockHandler.isPending
-                          ? "la accion de incrementar stock esta tomando mas tiempo, espere por favor"
-                          : "guardar cambios"
-                    }
-                  >
-                    <i className="fa-solid fa-check" />
-                    Guardar
-                  </button>
-                )}
-              </div>
+                  {handleModal === "view" && user?.rol === "ADMIN" && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsEditing(true);
+                        setHandleModal("edit");
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80 cursor-pointer"
+                      style={{
+                        backgroundColor: "var(--color-background-buttons)",
+                        color: "var(--color-text-general)",
+                      }}
+                    >
+                      <i className="fa-solid fa-pen-to-square" />
+                      Editar
+                    </button>
+                  )}
+
+                  {handleModal !== "view" && (
+                    <button
+                      type="submit"
+                      disabled={
+                        isActionPending.isCreate ||
+                        isActionPending.isUpdate ||
+                        increaseStockHandler.isPending
+                      }
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      style={{
+                        backgroundColor: "var(--color-bg-success)",
+                        color: "white",
+                      }}
+                      title={
+                        isActionPending.isCreate || isActionPending.isUpdate
+                          ? isActionPending.message
+                          : increaseStockHandler.isPending
+                            ? "la accion de incrementar stock esta tomando mas tiempo, espere por favor"
+                            : "guardar cambios"
+                      }
+                    >
+                      <i className="fa-solid fa-check" />
+                      Guardar
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
           </div>
         </>
@@ -1059,12 +1058,10 @@ const ProductsPage = () => {
                       <button
                         type="button"
                         title="eliminar producto"
-                        onClick={() =>
-                          {
-                            setHandleModal("edit")
-                            deleteProductHandler.mutate({ id: p.id })
-                          }
-                        }
+                        onClick={() => {
+                          setHandleModal("edit");
+                          deleteProductHandler.mutate({ id: p.id });
+                        }}
                         className="text-color-text-danger hover:text-color-bg-danger transition-colors cursor-pointer"
                       >
                         <i className="fa-solid fa-trash-can text-lg" />

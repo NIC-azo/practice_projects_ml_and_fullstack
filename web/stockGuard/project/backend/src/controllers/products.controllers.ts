@@ -94,13 +94,14 @@ class ProductsController {
       const productFound = await productsModel.getProductForController(
         String(restOfBody.bars_code!),
       );
-      if (productFound) {
+      if (productFound && productFound.id !== String(id_product!)) {
         return ApiResponse.errorOperations(
           res,
           "ya existe un producto con el mismo codigo de barras, intentelo denuevo",
         );
       }
     }
+    
     const productConverted: updateProducts = {
       ...restOfBody,
     };
