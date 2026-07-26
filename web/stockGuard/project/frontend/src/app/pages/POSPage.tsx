@@ -235,7 +235,7 @@ function POSPage() {
         >
           <div className="relative w-full max-w-md bg-background-emojis-color-alert p-6 rounded-2xl shadow-blur-for-shadows">
             <button type="button" onClick={() => setErrorMessage("")}>
-              <i className="fa-solid fa-square-xmark text-xl text-background-emojis-color-alert hover:text-background-emojis-color-alert/60" />
+              <i className="fa-solid fa-square-xmark text-xl cursor-pointer text-background-emojis-color-alert hover:text-background-emojis-color-alert/60" />
             </button>
             <div className="pr-6">
               <p className="text-lg font-bold text-color-text-general leading-snug">
@@ -327,7 +327,7 @@ function POSPage() {
               </div>
               <button
                 onClick={() => setClientSelected(null)}
-                className="text-gray-400 hover:text-white"
+                className="text-gray-400 hover:text-white cursor-pointer"
               >
                 <i className="fa-solid fa-x text-red-500" />
               </button>
@@ -370,7 +370,7 @@ function POSPage() {
                           setClientsSearch("");
                           setclientDropOpen(false);
                         }}
-                        className="flex items-center gap-3 w-full px-4 py-2.5 text-left hover:bg-gray-800 transition-colors"
+                        className="flex items-center gap-3 w-full px-4 py-2.5 text-left hover:bg-gray-800 transition-colors cursor-pointer"
                       >
                         <span className="text-sm">{c.name}</span>
                         <span className="text-xs ml-auto text-gray-400">
@@ -391,7 +391,7 @@ function POSPage() {
               <button
                 key={v}
                 onClick={() => setVoucherType(v)}
-                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
+                className={`flex items-center justify-center cursor-pointer gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
                   voucherType === v
                     ? "border-sky-500 bg-sky-500/10 text-sky-400"
                     : "border-gray-800 bg-gray-950 text-gray-400 hover:text-white"
@@ -415,7 +415,7 @@ function POSPage() {
             {cart.length > 0 && (
               <button
                 onClick={() => setCart([])}
-                className="text-xs text-gray-400 hover:text-white"
+                className="text-xs text-gray-400 hover:text-white cursor-pointer"
               >
                 Limpiar
               </button>
@@ -446,7 +446,7 @@ function POSPage() {
                       </p>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
-                        className="text-gray-500 hover:text-red-400"
+                        className="text-gray-500 hover:text-red-400 cursor-pointer"
                       >
                         <i className="fa-solid fa-trash text-gray-500 text-lg" />
                       </button>
@@ -457,7 +457,7 @@ function POSPage() {
                           onClick={() =>
                             updateProductQuantity(item.product.id, item.quantity - 1)
                           }
-                          className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700"
+                          className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700 cursor-pointer"
                         >
                           <i className="fa-solid fa-minus text-gray-500 text-lg" />
                         </button>
@@ -468,7 +468,7 @@ function POSPage() {
                           onClick={() =>
                             updateProductQuantity(item.product.id, item.quantity + 1)
                           }
-                          className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700"
+                          className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700 cursor-pointer"
                         >
                           <i className="fa-solid fa-plus text-blue-500 text-lg" />
                         </button>
@@ -519,7 +519,7 @@ function POSPage() {
             disabled={
               beginSellMutation.isPending || cart.length === 0 || !clientSelected
             }
-            className="w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
+            className="w-full py-3 rounded-xl text-sm cursor-pointer font-semibold flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
           >
             {beginSellMutation.isPending ? (
               <i className="fa-solid fa-spinner text-sky-500 animate-spin text-lg" />
