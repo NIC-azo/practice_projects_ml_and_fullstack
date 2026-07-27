@@ -84,21 +84,21 @@ class ClientsController {
         }
         if (String(restOfBody.dni)){
             const userFound = await clientsModel.getClientForController(String(restOfBody.dni));
-            if (userFound){
+            if (userFound && userFound.id !== String(id_client!)){
                 return ApiResponse.errorOperations(res, 
                     "ya existe un cliente con el mismo dni")
             }
         }
         if (String(restOfBody.ruc)){
             const userFound = await clientsModel.getClientForController(String(restOfBody.ruc));
-            if (userFound){
+            if (userFound && userFound.id !== String(id_client!)){
                 return ApiResponse.errorOperations(res, 
                     "ya existe un cliente con el mismo ruc")
             }
         }
         if (String(restOfBody.cellPhone)){
             const userFound = await clientsModel.getClientForController(String(restOfBody.cellPhone));
-            if (userFound){
+            if (userFound && userFound.id !== String(id_client!)){
                 return ApiResponse.errorOperations(res, 
                     "ya existe un cliente con el mismo numero telefonico")
             }

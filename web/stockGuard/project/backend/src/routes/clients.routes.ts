@@ -15,8 +15,8 @@ class ClientsRoute {
         this.router.get('/health', () => console.log('clients route funcionando'));
         this.router.get('/', roleMiddleware("ADMIN"), ClientsController.getClients);
         this.router.post('/create', roleMiddleware("ADMIN", "ALMACENERO"), ClientsController.createclients);
-        this.router.put('/update/:id_client', roleMiddleware("ADMIN"), ClientsController.updateclients);
-        this.router.delete('/delete/:id_client', roleMiddleware("ADMIN"), ClientsController.deleteClients)
+        this.router.put('/update/:id_client', roleMiddleware("ADMIN", "ALMACENERO"), ClientsController.updateclients);
+        this.router.delete('/delete/:id_client', roleMiddleware("ADMIN", "ALMACENERO"), ClientsController.deleteClients)
     }
 }
 

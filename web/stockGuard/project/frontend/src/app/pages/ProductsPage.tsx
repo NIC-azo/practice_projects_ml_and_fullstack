@@ -1083,7 +1083,7 @@ const ProductsPage = () => {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="font-medium">
-              <label className="block text-sm text-color-text-general mb-1">
+              <label className="block text-sm text-text-info mb-1">
                 Nombre *
               </label>
               <input
@@ -1093,7 +1093,7 @@ const ProductsPage = () => {
                 }
                 value={formData.name}
                 className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
-                border-color-border-focus text-color-text-button hover:border-color-primary focus:border-color-primary"
+                border-border-focus text-text-button hover:border-border-input/70 focus:border-border-focus/70"
               />
             </div>
             <div className="font-medium">
