@@ -61,7 +61,7 @@ export interface ClientsManagement {
     email: string | null;
     dni: string | null;
     ruc: string | null;
-    cellphone: string | null;
+    cellPhone: string | null;
 }
 
 export interface UsersResponseData {

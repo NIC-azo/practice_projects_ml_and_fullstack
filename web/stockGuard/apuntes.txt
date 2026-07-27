@@ -117,3 +117,45 @@ flujo: usuario presiona "ver mas" del producto en la tabla->llamamos a la funci�
 
 para incrementar el stock de un producto necesito: el valor que se ingrese + el id.
 flujo: usuario presiona "incrementar stock"->se muestra modal->usuario ingresa nuevo valor->bloqueamos si en el formData, el current stock esta en 0 (para prevenir que enviemos 0)->usuario presiona incrementar->llamamos función que decida si estamos en modo "incrementar stock" y hay un id->automáticamente esa función decide el handler correcto que lanza petición al backend->recibimos resultado->mostramos resultado
+
+---------------------------------------------------------
+¡Exactamente! Descubriste el problema clásico de la actualización parcial de estados en React. Al hacer setFormClients(c), estás cargando absolutamente todos los campos del cliente actual en el estado del formulario. De esta manera, cuando el usuario edita un solo campo, los demás no se pierden ni se envían vacíos (undefined o cadenas vacías) al backend.
+JavaScript y TypeScript necesitan tener el objeto completo mapeado antes de hacer el envío. Tu solución setFormClients(c) es la forma correcta y estándar de inicializar un formulario de edición.
+------------------------------
+## Un consejo de seguridad para tu handleSubmit
+Ahora que inicializas el estado pasándole el objeto completo del cliente (c), debes asegurarte de que tu función de envío (handleSubmit) limpie o remueva las propiedades automáticas de la base de datos (como id, createdAt o updatedAt) si es que tu interfaz o tu backend no las esperan dentro del cuerpo del PUT.
+Para clonar los datos modificados de forma segura excluyendo esos campos automáticos, puedes estructurar tu función de guardado utilizando la desestructuración de JavaScript de esta manera:
+
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  if (isEditing && editingId) {
+    // 🚀 Extraemos id, createdAt y updatedAt para no enviarlos al req.body del backend
+    const { id, createdAt, updatedAt, ...cleanData } = formClients as any;
+
+    updateClientMutation.mutate({ 
+      id: editingId, 
+      data: cleanData // Enviamos solo los campos editables (name, email, phone, etc.)
+    });
+  } else {
+    createClientMutation.mutate(formClients);
+  }
+};
+
+------------------------------
+## Tu función de limpieza (clearFields)
+No olvides que en el bloque onSuccess de tus mutaciones de clientes, tu función para limpiar los campos debe restablecer el formulario a su estado en blanco inicial, además de apagar los flags de edición:
+
+const clearFields = () => {
+  setFormClients(initialClientValues); // Tu objeto con campos vacíos ""
+  setIsEditing(false);
+  setEditingId(null);
+};
+
+¡Excelente trabajo de depuración! Ya tienes dominado el flujo de los estados tanto para formularios modales como para la edición directa.
+¿Qué te gustaría implementar ahora para continuar?
+
+* Agregar una alerta visual flotante (Toast) para confirmar cuando el cliente se elimine o edite con éxito
+* Configurar el controlador del backend para Clientes usando Prisma para recibir estos datos limpios
+
+

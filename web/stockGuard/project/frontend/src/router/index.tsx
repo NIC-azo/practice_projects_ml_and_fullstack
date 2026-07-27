@@ -6,6 +6,7 @@ import MainLayout from "@/layout/MainLayout";
 import Dashboard from "@/app/pages/Dashboard";
 import ProductsPage from "@/app/pages/ProductsPage";
 import POSPage from "@/app/pages/POSPage";
+import ClientsPage from "@/app/pages/ClientsPage";
 import { useAuthStore } from "@/store/auth.store";
 import { useEffect } from "react";
 
@@ -35,6 +36,7 @@ const AppRouter = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products" element={<ProductsPage />}></Route>
           <Route path="/pos" element={<POSPage />}></Route>
+          <Route path="/clients" element={<ClientsPage />}></Route>
         </Route>
       </Route>
     </Routes>

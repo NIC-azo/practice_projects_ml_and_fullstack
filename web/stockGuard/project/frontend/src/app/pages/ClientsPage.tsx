@@ -14,7 +14,7 @@ const initialClientsValue: ClientsManagement = {
   email: "",
   dni: "",
   ruc: "",
-  cellphone: "",
+  cellPhone: "",
 };
 
 function ClientsPage() {
@@ -232,7 +232,7 @@ function ClientsPage() {
               <input
                 value={formClients.name}
                 onChange={(e) =>
-                  setFormClients({ ...formClients, email: e.target.value })
+                  setFormClients({ ...formClients, name: e.target.value })
                 }
                 type="text"
                 placeholder="ejem: pedro ..."
@@ -284,9 +284,9 @@ function ClientsPage() {
               </label>
               <input
                 type="number"
-                value={formClients.cellphone ?? "9 numeros"}
+                value={formClients.cellPhone ?? "9 numeros"}
                 onChange={(e) =>
-                  setFormClients({ ...formClients, cellphone: e.target.value })
+                  setFormClients({ ...formClients, cellPhone: e.target.value })
                 }
                 placeholder="910..."
                 className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
@@ -345,11 +345,11 @@ function ClientsPage() {
                   {isEditing && editingId === c.id ? (
                     <>
                       <input
-                        value={c.name}
+                        value={formClients.name}
                         onChange={(e) =>
                           setFormClients({
                             ...formClients,
-                            email: e.target.value,
+                            name: e.target.value,
                           })
                         }
                         type="text"
@@ -374,24 +374,21 @@ function ClientsPage() {
                   {isEditing && editingId === c.id ? (
                     <>
                       <input
-                        value={c.email ?? ""}
+                        value={formClients.email ?? ""}
                         onChange={(e) =>
                           setFormClients({
                             ...formClients,
                             email: e.target.value,
                           })
                         }
-                        type="text"
-                        placeholder="ejem: pedro ..."
+                        type="email"
+                        placeholder="ejem: nombre@dominio.com"
                         className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
                       border-border-focus text-text-button hover:border-border-input/70 focus:border-border-focus/70"
                       />
                     </>
                   ) : (
                     <>
-                      <span className="text-color-text-warning">
-                        <i className="fa-solid fa-address-card" />
-                      </span>
                       <span className="font-medium text-text-info truncate">
                         {c.email}
                       </span>
@@ -403,24 +400,21 @@ function ClientsPage() {
                   {isEditing && editingId === c.id ? (
                     <>
                       <input
-                        value={c.dni ?? ""}
+                        value={formClients.dni ?? ""}
                         onChange={(e) =>
                           setFormClients({
                             ...formClients,
-                            email: e.target.value,
+                            dni: e.target.value,
                           })
                         }
-                        type="text"
-                        placeholder="ejem: pedro ..."
+                        type="number"
+                        placeholder="ejem: 8 digitos"
                         className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
                       border-border-focus text-text-button hover:border-border-input/70 focus:border-border-focus/70"
                       />
                     </>
                   ) : (
                     <>
-                      <span className="text-color-text-warning">
-                        <i className="fa-solid fa-address-card" />
-                      </span>
                       <span className="font-medium text-text-info truncate">
                         {c.dni}
                       </span>
@@ -432,24 +426,21 @@ function ClientsPage() {
                   {isEditing && editingId === c.id ? (
                     <>
                       <input
-                        value={c.ruc ?? ""}
+                        value={formClients.ruc ?? ""}
                         onChange={(e) =>
                           setFormClients({
                             ...formClients,
-                            email: e.target.value,
+                            ruc: e.target.value,
                           })
                         }
-                        type="text"
-                        placeholder="ejem: pedro ..."
+                        type="number"
+                        placeholder="ejem: 10...numero dni"
                         className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
                       border-border-focus text-text-button hover:border-border-input/70 focus:border-border-focus/70"
                       />
                     </>
                   ) : (
                     <>
-                      <span className="text-color-text-warning">
-                        <i className="fa-solid fa-address-card" />
-                      </span>
                       <span className="font-medium text-text-info truncate">
                         {c.ruc}
                       </span>
@@ -461,24 +452,21 @@ function ClientsPage() {
                   {isEditing && editingId === c.id ? (
                     <>
                       <input
-                        value={c.cellPhone ?? ""}
+                        value={formClients.cellPhone ?? ""}
                         onChange={(e) =>
                           setFormClients({
                             ...formClients,
-                            email: e.target.value,
+                            cellPhone: e.target.value,
                           })
                         }
-                        type="text"
-                        placeholder="ejem: pedro ..."
+                        type="number"
+                        placeholder="ejem: 909023332"
                         className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm border outline-none transition-all bg-background-buttons
                       border-border-focus text-text-button hover:border-border-input/70 focus:border-border-focus/70"
                       />
                     </>
                   ) : (
                     <>
-                      <span className="text-color-text-warning">
-                        <i className="fa-solid fa-address-card" />
-                      </span>
                       <span className="font-medium text-text-info truncate">
                         {c.cellPhone}
                       </span>
@@ -492,10 +480,8 @@ function ClientsPage() {
                     <>
                       <button
                         type="button"
-                        onClick={() => {
-                          setIsEditing(false);
-                          setEditingId(null);
-                        }}
+                        onClick={clearFields}
+                        title="cancelar"
                       >
                         <i className="fa-solid fa-square-xmark" />
                       </button>
@@ -507,6 +493,7 @@ function ClientsPage() {
                             data: formClients,
                           })
                         }
+                        title="guardar"
                       >
                         <i className="fa-solid fa-circle-check" />
                       </button>
@@ -516,9 +503,11 @@ function ClientsPage() {
                       <button
                         type="button"
                         onClick={() => {
-                          setActive(true);
+                          setIsEditing(true);
                           setEditingId(c.id);
+                          setFormClients(c)
                         }}
+                        title="editar"
                       >
                         <i className="fa-solid fa-pen-to-square" />
                       </button>
@@ -527,6 +516,7 @@ function ClientsPage() {
                   <button
                     type="button"
                     onClick={() => deleteClientMutation.mutate({ id: c.id })}
+                    title="eliminar"
                   >
                     <i className="fa-solid fa-trash-can" />
                   </button>
