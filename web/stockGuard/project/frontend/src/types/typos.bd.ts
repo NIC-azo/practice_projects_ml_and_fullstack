@@ -1,5 +1,5 @@
 export type Rol = 'ADMIN' | 'ALMACENERO';
-export type VoucherType =  "BOLETA" | "FACTURA";
+export type TypeVoucher =  "BOLETA" | "FACTURA";
 export interface UserForTypos {
     userId: string;
     rol: Rol;
@@ -179,7 +179,7 @@ export interface CartItem {
 
 export interface BeginInitSell {
     clientId: string;
-    typeVoucher: VoucherType;
+    typeVoucher: TypeVoucher;
     itemsSelected: Array<{
         productId: string;
         quantity: number;

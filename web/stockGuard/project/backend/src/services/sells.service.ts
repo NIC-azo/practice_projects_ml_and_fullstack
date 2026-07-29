@@ -1,6 +1,5 @@
 import prismaInstance from "@lib/connection.js";
 import type { InitSell, Status } from "@modelTypes/bd.types.js";
-import jwt from "jsonwebtoken"
 class SellsService {
 
     initSell = async (userId: string, request: InitSell) => {
@@ -46,7 +45,7 @@ class SellsService {
         if (errors.length > 0) {
             return { success: false, errors };
         }
-        const creatingDetails = prismaInstance.$transaction(async (tx) => {
+        const creatingDetails = await prismaInstance.$transaction(async (tx) => {
             const newSale = await tx.sells.create({
                 data: {
                     userId: userId,
@@ -82,7 +81,7 @@ class SellsService {
             };
             return newSale;
         });
-        return {data: creatingDetails}
+        return {success: true, data: creatingDetails}
     };
 
     updateSellStatus = async (idSell: string, status: Status) => {

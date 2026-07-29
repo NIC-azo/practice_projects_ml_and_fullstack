@@ -1,9 +1,5 @@
 import { request } from "@/api/request.config";
-import {
-  useQuery,
-  useQueryClient,
-  useMutation,
-} from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import type {
   ProductsResponseData,
   BeginInitSell,
@@ -12,7 +8,7 @@ import type {
   CustomApiError,
   ClientsManagement,
   CreateProduct,
-  VoucherType,
+  TypeVoucher,
 } from "@/types/typos.bd";
 import { useMemo, useState } from "react";
 import type { AxiosResponse } from "axios";
@@ -43,7 +39,7 @@ function POSPage() {
     queryKey: ["products"],
     queryFn: async () => {
       const res = await request<ProductsResponseData[]>("get", "/products/");
-      return Array.isArray(res) ? res : ((res as AxiosResponse).data ?? [])
+      return Array.isArray(res) ? res : ((res as AxiosResponse).data ?? []);
     },
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
@@ -65,6 +61,14 @@ function POSPage() {
     {
       mutationFn: (payload) => request("post", "/sells/create", payload),
       onSuccess: () => {
+        // 1. Guardamos el resumen congelado para la vista de éxito
+        setLastSaleSummary({
+          clientName: clientSelected?.name || "",
+          total: total,
+          voucher: voucherType,
+        });
+        setSuccess(true);
+        setCart([]);
         queryClient.invalidateQueries({ queryKey: ["products"] });
       },
       onError: (error) => {
@@ -88,9 +92,14 @@ function POSPage() {
   const [clientSelected, setClientSelected] = useState<
     (ClientsManagement & { id: string }) | null
   >(null);
-  const [voucherType, setVoucherType] = useState<VoucherType>("BOLETA");
+  const [voucherType, setVoucherType] = useState<TypeVoucher>("BOLETA");
   const [clientDropOpen, setclientDropOpen] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
+  const [lastSaleSummary, setLastSaleSummary] = useState<{
+    clientName: string;
+    total: number;
+    voucher: TypeVoucher;
+  } | null>(null);
 
   const filteredProducts = useMemo(() => {
     return products.filter(
@@ -139,8 +148,12 @@ function POSPage() {
   const updateProductQuantity = (productId: string, quantity: number) => {
     if (quantity < 1) return removeFromCart(productId);
     const item = cart.find((i) => i.product.id === productId);
-    if (item && quantity > (item.quantity ?? 0)) {
-      setErrorMessage("stock maximo alcanzado");
+    if (!item) return;
+
+    // Comparar con el stock real del producto
+    const availableStock = item.product.current_stock ?? 0;
+    if (quantity > availableStock) {
+      setErrorMessage("Stock máximo disponible alcanzado en almacén");
       return;
     }
     setCart((prev) => {
@@ -175,6 +188,8 @@ function POSPage() {
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Evitar envíos múltiples si ya está cargando
+    if (beginSellMutation.isPending) return;
     if (!clientSelected) return setErrorMessage("Selecciona un cliente");
     if (!cart) {
       setErrorMessage("no se encontraron productos en el carrito");
@@ -198,27 +213,33 @@ function POSPage() {
     setClientSelected(null);
     setVoucherType("BOLETA");
     setSuccess(false);
+    setLastSaleSummary(null);
     setProductsSearch("");
+    setErrorMessage("");
   };
 
-  if (success) {
+  if (success && lastSaleSummary) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-6">
         <div className="w-20 h-20 rounded-full flex items-center justify-center bg-emerald-500/10">
-          <i className="fa-regular fa-circle-check text-emerald-500 text-lg" />
+          <i className="fa-regular fa-circle-check text-emerald-500 text-3xl" />
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-1">Venta Procesada</h2>
-          <p className="text-sm text-color-text-general mb-1">
-            {voucherType} emitido para <strong>{clientSelected?.name}</strong>
+          <h2 className="text-xl font-semibold mb-1 text-color-text-general">
+            Venta Procesada
+          </h2>
+          <p className="text-sm text-gray-400 mb-1">
+            {lastSaleSummary.voucher} emitido para{" "}
+            <strong className="text-white">{lastSaleSummary.clientName}</strong>
           </p>
           <p className="text-2xl font-bold mt-3 text-emerald-400 font-mono">
-            S/. {total.toFixed(2)}
+            S/. {lastSaleSummary.total.toFixed(2)}
           </p>
         </div>
         <button
+          type="button"
           onClick={handleNewSale}
-          className="px-6 py-3 rounded-xl text-sm font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors"
+          className="px-6 py-3 rounded-xl text-sm font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors cursor-pointer"
         >
           Nueva Venta
         </button>
@@ -228,7 +249,7 @@ function POSPage() {
 
   return (
     <div className="flex gap-5 h-full min-h-[calc(100vh-120px)]">
-      {(isErrorProducts || isErrorclients) && errorMessage.length > 0 && (
+      {(isErrorProducts || isErrorclients || errorMessage.length > 0) && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/75 p-4 
           animate-fade-in-form-modal duration-200"
@@ -365,7 +386,7 @@ function POSPage() {
                             email: c.email,
                             ruc: c.ruc,
                             dni: c.dni,
-                            cellphone: c.cellPhone,
+                            cellPhone: c.cellPhone,
                           });
                           setClientsSearch("");
                           setclientDropOpen(false);
@@ -387,7 +408,7 @@ function POSPage() {
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-4">
           <p className="text-xs font-medium text-gray-400 mb-2">COMPROBANTE</p>
           <div className="grid grid-cols-2 gap-2">
-            {(["BOLETA", "FACTURA"] as VoucherType[]).map((v) => (
+            {(["BOLETA", "FACTURA"] as TypeVoucher[]).map((v) => (
               <button
                 key={v}
                 onClick={() => setVoucherType(v)}
@@ -397,8 +418,7 @@ function POSPage() {
                     : "border-gray-800 bg-gray-950 text-gray-400 hover:text-white"
                 }`}
               >
-                <i className="fa-solid fa-receipt text-lg text-gray-500" />{" "}
-                {v}
+                <i className="fa-solid fa-receipt text-lg text-gray-500" /> {v}
               </button>
             ))}
           </div>
@@ -455,7 +475,10 @@ function POSPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() =>
-                            updateProductQuantity(item.product.id, item.quantity - 1)
+                            updateProductQuantity(
+                              item.product.id,
+                              item.quantity - 1,
+                            )
                           }
                           className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700 cursor-pointer"
                         >
@@ -466,7 +489,10 @@ function POSPage() {
                         </span>
                         <button
                           onClick={() =>
-                            updateProductQuantity(item.product.id, item.quantity + 1)
+                            updateProductQuantity(
+                              item.product.id,
+                              item.quantity + 1,
+                            )
                           }
                           className="w-6 h-6 rounded-md bg-gray-800 flex items-center justify-center hover:bg-gray-700 cursor-pointer"
                         >
@@ -517,7 +543,9 @@ function POSPage() {
           <button
             type="submit"
             disabled={
-              beginSellMutation.isPending || cart.length === 0 || !clientSelected
+              beginSellMutation.isPending ||
+              cart.length === 0 ||
+              !clientSelected
             }
             className="w-full py-3 rounded-xl text-sm cursor-pointer font-semibold flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
           >
