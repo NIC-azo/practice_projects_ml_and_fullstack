@@ -7,6 +7,9 @@ import Dashboard from "@/app/pages/Dashboard";
 import ProductsPage from "@/app/pages/ProductsPage";
 import POSPage from "@/app/pages/POSPage";
 import ClientsPage from "@/app/pages/ClientsPage";
+import UsersPage from "@/app/pages/UsersPage";
+import HistoryPage from "@/app/pages/HistoryPage";
+import ProfilePage from "@/app/pages/ProfilePage";
 import { useAuthStore } from "@/store/auth.store";
 import { useEffect } from "react";
 
@@ -37,8 +40,26 @@ const AppRouter = () => {
           <Route path="/products" element={<ProductsPage />}></Route>
           <Route path="/pos" element={<POSPage />}></Route>
           <Route path="/clients" element={<ClientsPage />}></Route>
+          {/* Módulo de Perfil o configuraciones comunes */}
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Route>
+      <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]} />}>
+        {/* Inyectamos el diseño base con la barra lateral y el ThemeToggle */}
+        <Route element={<MainLayout />}>
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/history" element={<HistoryPage />} />
+        </Route>
+      </Route>
+      {/* 5. Ruta de Escape en caso de accesos denegados o páginas no encontradas */}
+      <Route
+        path="/unauthorized"
+        element={
+          <div className="flex h-screen items-center justify-center font-bold">
+            No tienes permisos para ver esto.
+          </div>
+        }
+      />
     </Routes>
   );
 };

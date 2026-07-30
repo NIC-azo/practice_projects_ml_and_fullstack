@@ -1,5 +1,6 @@
 export type Rol = 'ADMIN' | 'ALMACENERO';
 export type TypeVoucher =  "BOLETA" | "FACTURA";
+export type Status = "CANCELADO" | "EN_PROCESO" | "ANULADO";
 export interface UserForTypos {
     userId: string;
     rol: Rol;
@@ -104,7 +105,7 @@ export interface HistoryResponseData {
     };
     createdAt: Date;
     voucher: "BOLETA" | "FACTURA";
-    status: "CANCELADO" | "EN_PROCESO" | "ANULADO";
+    status: Status;
     total: number;
     user: {
         name: string;
@@ -130,7 +131,7 @@ export interface AdminDataReportsResponse {
     latest5Transactions: Array<{
         id: string;
         createdAt: Date;
-        status: "CANCELADO" | "EN_PROCESO" | "ANULADO";
+        status: Status;
         total: number;
         user: {
             name: string;
