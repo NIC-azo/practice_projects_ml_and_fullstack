@@ -1,0 +1,21 @@
+{
+  "name": "1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "concurrently \"cd backend && pnpm dev \" \"cd mobile mobile && pnpm start",
+    "test:mobile": "cd mobile && pnpm start",
+    "test:backend": "cd backend && pnpm dev",
+    "test:mobile:android": "cd mobile && pnpm android",
+    "test:mobile:ios": "cd mobile && pnpm ios",
+    "test:mobile:web": "cd mobile && pnpm web"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.26.1",
+  "devDependencies": {
+    "concurrently": "^10.0.4"
+  }
+}
