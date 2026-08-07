@@ -1,6 +1,6 @@
 import type { CorsOptions } from "cors";
 import "dotenv/config"
-
+// configuracion para el cors de server.ts
 export const corsConfig: CorsOptions = {
     origin: function (origin, callback) {
         const allowedOrigins = process.env["ALLOWED_ORIGINS"]!.split(",") || [];

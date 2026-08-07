@@ -1,1 +1,1 @@
-para frontend (app.config.js): 
+para frontend (app.config.js): puede que haga similar como en cors.config.ts para dinamizar conexion
