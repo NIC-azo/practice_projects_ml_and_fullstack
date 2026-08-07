@@ -4,6 +4,10 @@ export interface UserManagement {
     passwordHashed: string;
 }
 
+export interface JWTPayload {
+    userId: string;
+}
+
 export interface UserUpdate {
     userName?: string;
     email?: string;

@@ -3,7 +3,7 @@ import type { UserManagement, UserUpdate } from "@modelTypes/typos.bd.js";
 
 class UsersModel {
     getUserById = async (id: string) => {
-        return await prismaConfig.user.findMany({
+        return await prismaConfig.user.findUnique({
             where: {
                 id: id,
                 active: true,
@@ -18,18 +18,19 @@ class UsersModel {
         });
     }
     getUserByemail = async (email: string) => {
-        return await prismaConfig.user.findMany({
+        return await prismaConfig.user.findUnique({
             where: {
                 email: email,
                 active: true,
             },
             select: {
                 id: true,
+                passwordHashed: true,
             }
         });
     }
     getUserByNickName = async (name: string) => {
-        return await prismaConfig.user.findMany({
+        return await prismaConfig.user.findFirst({
             where: {
                 userName: name,
                 active: true,
