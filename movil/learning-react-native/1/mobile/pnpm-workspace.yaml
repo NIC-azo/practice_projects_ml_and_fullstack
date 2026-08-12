@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - unrs-resolver
+
+patchedDependencies:
+  metro-config@0.83.7: patches/metro-config@0.83.7.patch

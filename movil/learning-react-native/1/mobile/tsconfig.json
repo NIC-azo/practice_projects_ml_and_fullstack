@@ -2,15 +2,20 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    /* 🧬 Soporte para Decoradores */
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "ignoreDeprecations": "6.0",
-    
-    /* 🛣️ Configuración de Alias de Rutas (@/*) */
     "baseUrl": ".",
+    "types": [
+      "node"
+    ],
+    "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
-  }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "nativewind-env.d.ts"
+  ]
 }
