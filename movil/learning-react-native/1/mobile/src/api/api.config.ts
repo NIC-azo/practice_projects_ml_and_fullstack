@@ -1,11 +1,11 @@
 import Constants from "expo-constants";
-import axios, { type AxiosError, AxiosRequestConfig } from "axios";
-import * as SecureStore from "expo-secure-store";
+import { create, type AxiosRequestConfig, isAxiosError } from "axios";
+import { tokenStorage } from "@/utils/secureStorage";
 import { CustomApiError, ErrorOperationsTypo } from "../types/typos";
 
 const API_URL = Constants.expoConfig?.extra?.apiUrl || "http://localhost:3000";
 // conexion a la bd con un tiempo limite de 10 seg
-const api = axios.create({
+const api = create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
@@ -14,8 +14,8 @@ const api = axios.create({
 });
 
 // para requerir algo debemos enviar el token
-api.interceptors.request.use((config) => {
-  const token = SecureStore.getItem("todoApp_token");
+api.interceptors.request.use(async (config) => {
+  const token = await tokenStorage.get();
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -33,7 +33,7 @@ api.interceptors.response.use(
       message: "Error al obtener mensaje de la respuesta",
       isNetworkError: false,
     };
-    if (axios.isAxiosError<ErrorOperationsTypo>(error)) {
+    if (isAxiosError<ErrorOperationsTypo>(error)) {
       if (error.response) {
         normalizedError.status = error.response.status;
         normalizedError.message = error.response.data.message;
