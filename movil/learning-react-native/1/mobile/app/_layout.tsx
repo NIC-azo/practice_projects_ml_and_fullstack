@@ -23,10 +23,10 @@ function RootNavigator() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={isAuthenticated}>
-        <Stack.Screen name="(app)" />
+        <Stack.Screen name="/(app)" />
       </Stack.Protected>
       <Stack.Protected guard={!isAuthenticated}>
-        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="/(auth)" />
       </Stack.Protected>
     </Stack>
   );
