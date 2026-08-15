@@ -8,7 +8,7 @@ function handleAuthError(error: unknown) {
     const err = error as CustomApiError;
     if (err.status === 401) {
         useAuthStore.getState().logout();
-        router.replace('/(auth)/login');
+        router.replace('/(auth)');
     }
 }
 // exportamos instancia de QueryClient para cuando haya un error en la obtencion de datos como

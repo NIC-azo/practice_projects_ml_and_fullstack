@@ -1,8 +1,8 @@
+import "dotenv/config"
 import { router } from "@/routes/index.js";
 import express from "express";
 import cors from "cors"
 import { corsConfig } from "@/utils/cors.configuration.js";
-import "dotenv/config"
 
 const app = express();
 const PORT = process.env.PORT;
