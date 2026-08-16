@@ -5,7 +5,7 @@ export class ApiResponse {
         return res.status(status).json({token, message, userId});
     };
     static returnResult<T>(res: Response, data: T, status = 200) {
-        return res.status(status).json(data);
+        return res.status(status).json({data});
     };
     static errorOperation(res: Response, message: string, status = 400) {
         return res.status(status).json({error: true, message});

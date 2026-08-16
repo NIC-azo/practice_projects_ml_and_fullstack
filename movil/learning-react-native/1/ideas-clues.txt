@@ -1,1 +1,1646 @@
-para frontend (app.config.js): puede que haga similar como en cors.config.ts para dinamizar conexion
+BACKEND [.env (DATABASE_URL="prisma+postgres://localhost:51213/?api_key=eyJkYXRhYmFzZVVybCI6InBvc3RncmVzOi8vcG9zdGdyZXM6cG9zdGdyZXNAbG9jYWxob3N0OjUxMjE0L3RlbXBsYXRlMT9zc2xtb2RlPWRpc2FibGUmY29ubmVjdGlvbl9saW1pdD0xMCZjb25uZWN0X3RpbWVvdXQ9MCZtYXhfaWRsZV9jb25uZWN0aW9uX2xpZmV0aW1lPTAmcG9vbF90aW1lb3V0PTAmc29ja2V0X3RpbWVvdXQ9MCIsIm5hbWUiOiJkZWZhdWx0Iiwic2hhZG93RGF0YWJhc2VVcmwiOiJwb3N0Z3JlczovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1MTIxNS90ZW1wbGF0ZTE_c3NsbW9kZT1kaXNhYmxlJmNvbm5lY3Rpb25fbGltaXQ9MTAmY29ubmVjdF90aW1lb3V0PTAmbWF4X2lkbGVfY29ubmVjdGlvbl9saWZldGltZT0wJnBvb2xfdGltZW91dD0wJnNvY2tldF90aW1lb3V0PTAifQ"
+LOCAL_DATABASE_URL="postgresql://postgres:140814@localhost:5432/mobile_test_todo_login?schema=public&sslmode=disable"
+PORT=3000
+NODE_ENV="dev"
+JWT_SECRET="ebe4f669626d7cd3e4c3d2f6f39d5b2d31226d8aa6ed5eb1d9fcdac1105c274fbf0431f944d5df3956560a68f55beebdc812bb6e488b09c64dfd82a09446e992"
+ALLOWED_ORIGINS=http://localhost:8081,http://localhost:3000,http://192.168.0.7:8081
+SALT_ROUNDS=10), tsconfig.json ({
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // File Layout
+    "rootDir": ".",
+    "outDir": "./dist",
+
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    "module": "nodenext",
+    "target": "esnext",
+    // For nodejs:
+    "lib": ["esnext"],
+    "types": ["node"],
+    // and npm install -D @types/node
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Style Options
+    // "noImplicitReturns": true,
+    // "noImplicitOverride": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true,
+
+    // Recommended Options
+    "esModuleInterop": true,
+    "moduleResolution": "nodenext",
+    "ignoreDeprecations": "6.0",
+    "strict": true,
+    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@models/*" : ["src/models/*"],
+      "@routes/*": ["src/routes/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@services/*": ["src/services/*"],
+      "@lib/*": ["src/lib/*"],
+      "@modelTypes/*": ["src/types/*"],
+      "@utils/*" : ["src/utils/*"],
+    },
+  },
+  "include": [
+    "server.ts",
+    "prisma/seed.ts",
+    "src/**/*",
+    "prisma.config.ts"
+  ],
+  "exclude": ["node_modules"]
+}
+), server.ts (import "dotenv/config"
+import { router } from "@/routes/index.js";
+import express from "express";
+import cors from "cors"
+import { corsConfig } from "@/utils/cors.configuration.js";
+
+const app = express();
+const PORT = process.env.PORT;
+
+// Middlewares
+app.use(cors(corsConfig));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Rutas
+app.use('/api', router);
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT} (NODE_ENV: ${process.env.NODE_ENV})`);
+});
+), package.json ({
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "init:tsconfig": "tsc --init",
+    "build": "tsc",
+    "dev": "tsx watch server.ts",
+    "start": "tsx server.ts",
+    "prisma:seed": "npx tsx prisma/seed.ts",
+    "prisma:init": "prisma init",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.26.1",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.1.2",
+    "@types/pg": "^8.20.4",
+    "prisma": "^7.9.1",
+    "tsx": "^4.23.5",
+    "typescript": "^7.0.2"
+  }
+}
+), schema.prisma (// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String   @id @default(uuid())
+  userName       String
+  email          String   @unique
+  passwordHashed String
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  todo Todo[]
+}
+
+model Todo {
+  id          String   @id @default(uuid())
+  title       String?
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
+), todo.controller (import { errorHandler } from "@/middlewares/errors.middleware.js";
+import todoModel from "@/models/todo.model.js";
+import { ApiResponse } from "@/utils/api.response.helper.js";
+import type { TodoManagement } from "@modelTypes/typos.bd.js"
+import type { Request, Response } from "express";
+
+class TodoController {
+    /**
+     * obtenemos todos por el id del usuario logeado/registrado
+     */
+    static getAll = errorHandler(async (req: Request, res: Response) => {
+        const {userId} = req.user!;
+        if (!userId) {
+            return ApiResponse.errorOperation(res, "token agotado, vuelva a iniciar sesion");
+        }
+        const results = await todoModel.getTodos(userId);
+        if (!results) {
+            return ApiResponse.errorOperation(res, "error interno al obtener todos", 500)
+        }
+        return ApiResponse.returnResult(res, results);
+    });
+    // creamos todo usando el id del usuario creado
+    static createTodo = errorHandler(async (req: Request, res: Response) => {
+        const {...restOfBody} = req.body;
+        const {userId} = req.user!;
+        if (!userId) {
+            return ApiResponse.errorOperation(res, "token agotado, vuelva a iniciar sesion");
+        }
+        const todoConverted: TodoManagement = {
+            ...restOfBody
+        };
+        const todoRecorded = await todoModel.createTodo(userId, todoConverted);
+        if (!todoRecorded) {
+            return ApiResponse.errorOperation(res, "error interno al crear todo", 500)
+        }
+        return ApiResponse.operation(res, "tarea/chore creado correctamente", 201)
+    });
+    // actualizamos el todo (aqui podemos pasar por params el id del todo al no ser tan importante como el del usuario)
+    static updateTodo = errorHandler(async (req: Request, res: Response) => {
+        const {...restOfBody} = req.body;
+        const {todoId} = req.params;
+        if (!String(todoId) || !todoId) {
+            return ApiResponse.errorOperation(res, "identificacion del todo/chore incorrecto");
+        }
+        const todoConverted: TodoManagement = {
+            ...restOfBody
+        }
+        const todoUpdated = await todoModel.updateTodo(String(todoId!), todoConverted);
+        if (!todoUpdated) {
+            return ApiResponse.errorOperation(res, "error interno al actualizar todo", 500)
+        }
+        return ApiResponse.operation(res, "tarea/chore actualizado correctamente")
+    });
+    // eliminar todo (con el id del todo)
+    static deleteTodo = errorHandler(async (req: Request, res: Response) => {
+        const {todoId} = req.params;
+        if (!String(todoId) || !todoId) {
+            return ApiResponse.errorOperation(res, "identificacion del todo/chore incorrecto");
+        }
+        const todoDeleted = await todoModel.deleteTodo(String(todoId!));
+        if (!todoDeleted) {
+            return ApiResponse.errorOperation(res, "error interno al eliminar todo", 500)
+        }
+        return ApiResponse.operation(res, "tarea/chore eliminado correctamente")
+    });
+}
+
+export default TodoController;), user.controller (import userModel from "@/models/user.model.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { errorHandler } from "@/middlewares/errors.middleware.js";
+import { ApiResponse } from "@/utils/api.response.helper.js";
+import type { Request, Response } from "express";
+import "dotenv/config";
+import type { UserUpdate } from "@modelTypes/typos.bd.js";
+
+class UsersController {
+  static login = errorHandler(async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    if (String(email).length < 0 || !email || !String(email).includes("@")) {
+      return ApiResponse.errorOperation(res, "credenciales incorrectas");
+    }
+    const userGotten = await userModel.getUserByemail(String(email!));
+    if (userGotten === undefined || !userGotten) {
+      return ApiResponse.errorOperation(res, "error al procesar login", 500);
+    }
+    if (String(password).length < 6 || String(password) === undefined) {
+      return ApiResponse.errorOperation(res, "credenciales incorrectas");
+    }
+    const userFound = await bcrypt.compare(
+      String(password!),
+      userGotten.passwordHashed,
+    );
+    if (!userFound) {
+      return ApiResponse.errorOperation(res, "error interno al logear", 500);
+    }
+    const genToken = jwt.sign(
+      { userId: userGotten.id },
+      process.env["JWT_SECRET"] ?? "",
+      { expiresIn: "24h" },
+    );
+    return ApiResponse.auth(
+      res,
+      genToken,
+      "autenticado correctamente, dirigiendo ",
+      userGotten.id,
+    );
+  });
+  /**
+   * necesitamos el username, email y password del usuario a registrar
+   * vamos a validar que el usuario no este duplicado o que no se duplique
+   * despues podemos llamar a los metodos correspondientes para poder crear al usuario
+   * (hasheando el password y luego llamando al metodo del model correspondiente)
+   */
+  static register = errorHandler(async (req: Request, res: Response) => {
+    const { userName, email, password } = req.body;
+    if (String(userName).length < 0 || !userName) {
+      return ApiResponse.errorOperation(res, "credenciales incorrectas");
+    }
+    if (String(email).length < 0 || !email || !String(email).includes("@")) {
+      return ApiResponse.errorOperation(res, "credenciales incorrectas");
+    }
+    if (String(password).length < 6 || String(password) === undefined) {
+      return ApiResponse.errorOperation(res, "credenciales incorrectas");
+    }
+    const validateUsernameDupplicated = await userModel.getUserByNickName(
+      String(userName!),
+    );
+    if (validateUsernameDupplicated) {
+      return ApiResponse.errorOperation(
+        res,
+        "ya existe un usuario con el mismo nombre de usuario, intentelo denuevo",
+      );
+    }
+    const validateEmailNotDupplicated = await userModel.getUserByemail(
+      String(email!),
+    );
+    if (validateEmailNotDupplicated) {
+      return ApiResponse.errorOperation(res, "credenciales incorrectas");
+    }
+    const salts = Number(process.env["SALT_ROUNDS"]);
+    const passwordHashed = await bcrypt.hash(String(password!), salts);
+    const userRecorded = await userModel.registerUser({
+      userName: String(userName!),
+      email: String(email!),
+      passwordHashed: passwordHashed,
+    });
+    if (!userRecorded) {
+      return ApiResponse.errorOperation(res, "error interno al registrar", 500);
+    }
+    return ApiResponse.operation(res, "Registrado correctamente", 201);
+  });
+  /**
+   * aqui usaremos el id del usuario pero sin pasarlo por parametros
+   * luego hacemos las validaciones por si es que en el objeto estan (username, email)
+   * luego procedemos con convertir el objeto al interface de UpdateUser de mi typos
+   * para usarlo en el metodo correspondiente del model y asi devolver resultado
+   */
+  static updateUser = errorHandler(async (req: Request, res: Response) => {
+    const { ...restOfBody } = req.body;
+    const { userId } = req.user!;
+    if (!userId) {
+      return ApiResponse.errorOperation(
+        res,
+        "token agotado, vuelva a iniciar sesion",
+      );
+    }
+    if (String(restOfBody.password) && String(restOfBody.password).length < 6) {
+      return ApiResponse.errorOperation(res, "credenciales incorrectas");
+    }
+    if (String(restOfBody.userName)) {
+      if (String(restOfBody.userName).length < 0) {
+        return ApiResponse.errorOperation(res, "credenciales incorrectas");
+      }
+      const userFound = await userModel.getUserByNickName(
+        String(restOfBody.userName!),
+      );
+      if (userFound && userFound.id !== userId) {
+        return ApiResponse.errorOperation(
+          res,
+          "ya existe un usuario con el mismo nickname, intentelo denuevo",
+        );
+      }
+    }
+    if (String(restOfBody.email)) {
+      if (
+        String(restOfBody.email).length < 0 ||
+        !String(restOfBody.email).includes("@")
+      ) {
+        return ApiResponse.errorOperation(res, "credenciales incorrectas");
+      }
+      const userFound = await userModel.getUserByemail(
+        String(restOfBody.email!),
+      );
+      if (userFound && userFound.id !== userId) {
+        return ApiResponse.errorOperation(
+          res,
+          "credenciales incorrectas, intentelo denuevo",
+        );
+      }
+    }
+    const { password, ...rest } = restOfBody;
+    const userConverted: UserUpdate = {
+      ...rest,
+      ...(password
+        ? {
+            passwordHashed: await bcrypt.hash(
+              String(password),
+              Number(process.env["SALT_ROUNDS"]),
+            ),
+          }
+        : {}),
+    };
+    const userUpdated = await userModel.updateUser(userId, userConverted);
+    if (!userUpdated) {
+      return ApiResponse.errorOperation(
+        res,
+        "error interno al actualizar usuario",
+        500,
+      );
+    }
+    return ApiResponse.operation(res, "usuario actualizado correctamente", 200);
+  });
+  /**
+   * solo necesitamos el id del usuario para eliminarlo
+   * para eso validamos el id del usuario
+   */
+  static deleteUser = errorHandler(async (req: Request, res: Response) => {
+    const { userId } = req.user!;
+    if (!userId) {
+      return ApiResponse.errorOperation(
+        res,
+        "token agotado, vuelva a iniciar sesion",
+      );
+    }
+    const userDeleted = await userModel.deleteUser(userId);
+    if (userDeleted === undefined) {
+      return ApiResponse.errorOperation(
+        res,
+        "error interno al eliminar usuario",
+      );
+    }
+    return ApiResponse.operation(res, "usuario eliminado correctamente");
+  });
+  /**
+   * obtener datos para perfilar usuario
+   */
+  static profileUser = errorHandler(async (req: Request, res: Response) => {
+    const { userId } = req.user!;
+    if (!userId) {
+      return ApiResponse.errorOperation(
+        res,
+        "token agotado, vuelva a iniciar sesion",
+      );
+    }
+    const result = await userModel.getUserById(userId);
+    if (!result) {
+      return ApiResponse.errorOperation(
+        res,
+        "no se encontro al usuario o no esta identificado",
+        500,
+      );
+    }
+    return ApiResponse.returnResult(res, result);
+  });
+}
+
+export default UsersController;
+), prisma.lib.ts (import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
+import "dotenv/config"
+// pool y prisma global
+const poolAndPrismaGlobal = globalThis as unknown as {
+    prismaGlobal: PrismaClient | undefined;
+    pool: Pool | undefined;
+}
+// discernimiento de url segun entorno
+const environment = process.env["NODE_ENV"];
+const db_url = process.env["DATABASE_URL"] ?? "";
+const local_db_url = process.env["LOCAL_DATABASE_URL"] ?? "";
+const connection_str = environment === "dev" ? local_db_url : db_url;
+// si no es undefinied entonces le pasamos la url de conexion
+const poolConfig = poolAndPrismaGlobal.pool ?? new Pool({
+    connectionString: connection_str,
+    ssl: environment ? {rejectUnauthorized: false} : true,
+});
+// terminamos de configurar el adaptador
+const adapter = new PrismaPg(poolConfig);
+// instancia de prisma client configurada
+const prismaConfig = poolAndPrismaGlobal.prismaGlobal ?? new PrismaClient({
+    adapter: adapter,
+    log: ['query', 'info', 'warn', 'error'],
+});
+// en produccion no reutilizamos conexion, en dev si
+if (environment === "dev") {
+    poolAndPrismaGlobal.prismaGlobal = prismaConfig;
+    poolAndPrismaGlobal.pool = poolConfig;
+}
+
+export default prismaConfig;), auth.middleware (/**
+ * vamos a evaluar si existe aun el token o es valido y va en authorization
+ * si al obtener el token (despues de separar Bearer [en este es "1"])
+ * pasa el metodo verify entonces pasamos al siguiente metodo del router
+ */
+import "dotenv/config"
+import jwt from "jsonwebtoken";
+import type { Request, Response, NextFunction } from "express"
+import type { JWTPayload } from "@modelTypes/typos.bd.js"
+import { errorHandler } from "@middlewares/errors.middleware.js"
+import { ApiResponse } from "@utils/api.response.helper.js"
+
+export const authMiddleware = errorHandler(async(req: Request, res: Response, next: NextFunction) => {
+    const headerAuth = req.headers.authorization;
+    if (!headerAuth?.includes("Bearer ")){
+        return ApiResponse.errorOperation(res, "se requiere del token para iniciar sesion", 401);
+    }
+    const tokenGotten = headerAuth.split(" ")[1]!;
+    const payload = jwt.verify(
+        tokenGotten,
+        process.env["JWT_SECRET"] || "",
+    ) as unknown as JWTPayload;
+    req.user = payload;
+    next();
+});), errors.middleware (import type { Request, Response, NextFunction } from "express";
+// para no usar try/catch devolviendo promesa de atrapar la siguiente funcion o accion segun si hay error
+export const errorHandler =
+  (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next)
+  };
+), todo.model (import prismaConfig from "@/lib/prisma.lib.js";
+import type { TodoManagement } from "@modelTypes/typos.bd.js";
+
+class TodoModel {
+    getTodos = async (userId: string) => {
+        return await prismaConfig.todo.findMany({
+            where: {
+                userId: userId,
+                active: true,
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+    };
+
+    createTodo = async (id: string, todo: TodoManagement) => {
+        return await prismaConfig.todo.create({
+            data:{
+                ...todo,
+                userId: id,
+            },
+            select: {
+                id: true,
+            },
+        });
+    };
+
+    updateTodo = async (todoId: string, todo: TodoManagement) => {
+        return await prismaConfig.todo.update({
+            where: {
+                id: todoId,
+            },
+            data: todo,
+            select: {
+                id: true,
+            },
+        });
+    };
+
+    deleteTodo = async (todoId: string) => {
+        return await prismaConfig.todo.update({
+            where: {
+                id: todoId,
+            },
+            data: {
+                active: false,
+            },
+        });
+    };
+}
+
+export default new TodoModel();), user.model (import prismaConfig from "@/lib/prisma.lib.js";
+import type { UserManagement, UserUpdate } from "@modelTypes/typos.bd.js";
+
+class UsersModel {
+    getUserById = async (id: string) => {
+        return await prismaConfig.user.findUnique({
+            where: {
+                id: id,
+                active: true,
+            },
+            select: {
+                id: true,
+                userName: true,
+                email: true,
+                createdAt: true,
+                updatedAt: true,
+            }
+        });
+    }
+    getUserByemail = async (email: string) => {
+        return await prismaConfig.user.findUnique({
+            where: {
+                email: email,
+                active: true,
+            },
+            select: {
+                id: true,
+                passwordHashed: true,
+            }
+        });
+    }
+    getUserByNickName = async (name: string) => {
+        return await prismaConfig.user.findFirst({
+            where: {
+                userName: name,
+                active: true,
+            },
+            select: {
+                id: true,
+            }
+        });
+    }
+    registerUser = async (user: UserManagement) => {
+        return await prismaConfig.user.create({
+            data: user,
+            select: {
+               id: true, 
+            },
+        });
+    }
+    updateUser = async (id: string, user: UserUpdate) => {
+        return await prismaConfig.user.update({
+            where: {
+                id: id,
+            },
+            data: user,
+            select: {
+                id: true,
+            }
+        })
+    }
+    deleteUser = async (id: string) => {
+        return await prismaConfig.user.update({
+            where: {
+                id: id,
+            },
+            data: {
+                active: false,
+            },
+            select: {
+                id: true,
+            },
+        });
+    }
+}
+
+export default new UsersModel();), routes/index.ts (import todoRoute from "@routes/todo.route.js";
+import userRoute from "@routes/user.route.js";
+import profileRoute from "@routes/profile.route.js";
+import { Router } from "express";
+
+const router: Router = Router();
+
+router.use('/auth', userRoute);
+router.use('/todos', todoRoute);
+router.use('/profile', profileRoute);
+
+export {router};), profile.route (import UsersController from "@/controllers/user.controller.js";
+import { authMiddleware } from "@/middlewares/auth.middleware.js";
+import { Router } from "express";
+
+class ProfileRoute {
+    public router: Router;
+
+    constructor(){
+        this.router = Router();
+        this.routesConfigurated();
+    }
+    private routesConfigurated(): void {
+        this.router.use(authMiddleware)
+        this.router.get('/health', () => console.log("profile route funcionando correctamente"));
+        this.router.get('/', UsersController.profileUser);
+        this.router.put('/update', UsersController.updateUser);
+        this.router.delete('/delete', UsersController.deleteUser);
+        this.router.get('/profile', UsersController.profileUser);
+    }
+}
+export default new ProfileRoute().router;), todo.route (import TodoController from "@/controllers/todo.controller.js";
+import { Router } from "express";
+import { authMiddleware } from "@/middlewares/auth.middleware.js";
+
+class TodoRoutes {
+    public router: Router;
+    
+    constructor(){
+        this.router = Router();
+        this.routesConfigurated();
+    }
+    private routesConfigurated(): void {
+        this.router.use(authMiddleware);
+        this.router.get('/health', () => console.log("todo routes funcionando correctamente"));
+        this.router.get('/', TodoController.getAll);
+        this.router.post('/create', TodoController.createTodo);
+        this.router.put('/update/:todoId', TodoController.updateTodo);
+        this.router.delete('/delete/:todoId', TodoController.deleteTodo);
+    }
+}
+
+export default new TodoRoutes().router;), user.route (import UsersController from "@/controllers/user.controller.js";
+import { Router } from "express";
+
+class UsersRoute {
+    public router: Router;
+    constructor() {
+        this.router = Router();
+        this.routesConfigurated();
+    }
+    private routesConfigurated(): void {
+        this.router.get('/health', () => console.log("users route funcionando correctamente"));
+        this.router.post('/login', UsersController.login);
+        this.router.post('/register', UsersController.register);
+    }
+}
+
+export default new UsersRoute().router;), express.d.ts (import type { JWTPayload } from "@modelTypes/typos.bd.ts";
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: JWTPayload;
+        }
+    }
+}), typos.bd.ts (export interface UserManagement {
+    userName: string;
+    email: string;
+    passwordHashed: string;
+}
+
+export interface JWTPayload {
+    userId: string;
+}
+
+export interface UserUpdate {
+    userName?: string;
+    email?: string;
+    passwordHashed?: string;
+}
+
+export interface TodoManagement {
+    title?: string;
+    description?: string;
+}), api.response.helper (import type { Response } from "express";
+
+export class ApiResponse {
+    static auth(res: Response, token: string, message: string, userId: string, status = 200) {
+        return res.status(status).json({token, message, userId});
+    };
+    static returnResult<T>(res: Response, data: T, status = 200) {
+        return res.status(status).json({data});
+    };
+    static errorOperation(res: Response, message: string, status = 400) {
+        return res.status(status).json({error: true, message});
+    };
+    static operation(res: Response, message: string, status = 200) {
+        return res.status(status).json({message});
+    };
+}), cors.configuration (import type { CorsOptions } from "cors";
+import "dotenv/config"
+// configuracion para el cors de server.ts
+export const corsConfig: CorsOptions = {
+    origin: function (origin, callback) {
+        const allowedOrigins = process.env["ALLOWED_ORIGINS"]!.split(",") || [];
+
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error("not allowed by cors"));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+}
+) ] 
+
+-------------------
+
+MOBILE [.env (EXPO_PUBLIC_API_URL=http://192.168.0.7:3000/api
+EXPO_PUBLIC_TOKEN_KEY="todoApp_token"
+EXPO_PUBLIC_USER_KEY="todoApp_user"), app.config.ts (import { ExpoConfig, ConfigContext } from "expo/config";
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: "TodoListApp",
+  slug: "todolist-app",
+  scheme: "mobile",
+  version: "1.0.0",
+  orientation: "portrait",
+  icon: "./assets/icon.png",
+  userInterfaceStyle: "light",
+  newArchEnabled: true,
+  splash: {
+    image: "./assets/splash-icon.png",
+    resizeMode: "contain",
+    backgroundColor: "#ffffff",
+  },
+  ios: { supportsTablet: true },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: "./assets/adaptive-icon.png",
+      backgroundColor: "#ffffff",
+    },
+    edgeToEdgeEnabled: true,
+  },
+  web: { favicon: "./assets/favicon.png", bundler: "metro" },
+  plugins: ["expo-router", "expo-secure-store"],
+  extra: {
+    apiUrl: process.env["EXPO_PUBLIC_API_URL"],
+  },
+});), babel.config.js (module.exports = function (api) {
+  api.cache(true);
+  return {
+    presets: [
+      ["babel-preset-expo", { jsxImportSource: "nativewind" }],
+      "nativewind/babel",
+    ],
+    plugins: [
+      [
+        "module-resolver",
+        {
+          root: ["./"],
+          alias: { "@": "./src" },
+          extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+        },
+      ],
+    ],
+  };
+};), eslint.config (// https://docs.expo.dev/guides/using-eslint/
+const { defineConfig } = require('eslint/config');
+const expoConfig = require('eslint-config-expo/flat');
+
+module.exports = defineConfig([
+  expoConfig,
+  {
+    ignores: ['dist/*'],
+  },
+]);
+), global.css (@tailwind base;
+@tailwind components;
+@tailwind utilities;), metro.config (const { getDefaultConfig } = require("expo/metro-config");
+const { withNativeWind } = require("nativewind/metro");
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = withNativeWind(config, { input: "./global.css" });), nativewind-env.d.ts (/// <reference types="nativewind/types" />
+
+declare module "*.css";), package.json ({
+  "name": "mobile",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@hookform/resolvers": "^5.7.1",
+    "@react-navigation/bottom-tabs": "^7.4.0",
+    "@react-navigation/elements": "^2.6.3",
+    "@react-navigation/native": "^7.1.8",
+    "@tanstack/react-query": "^5.101.4",
+    "axios": "^1.19.0",
+    "expo": "~54.0.35",
+    "expo-constants": "~18.0.13",
+    "expo-font": "~14.0.12",
+    "expo-haptics": "~15.0.8",
+    "expo-image": "~3.0.11",
+    "expo-linking": "~8.0.12",
+    "expo-router": "~6.0.24",
+    "expo-secure-store": "~15.0.8",
+    "expo-splash-screen": "~31.0.13",
+    "expo-status-bar": "~3.0.9",
+    "expo-symbols": "~1.0.8",
+    "expo-system-ui": "~6.0.9",
+    "expo-web-browser": "~15.0.11",
+    "nativewind": "^4.2.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.85.0",
+    "react-native": "0.81.5",
+    "react-native-css-interop": "^0.2.6",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.5.1",
+    "tailwindcss": "3.4.17",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@types/react": "~19.1.0",
+    "babel-plugin-module-resolver": "^5.0.3",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
+), tailwind.config.js (/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./app/**/*.{js,jsx,ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}"],
+  presets: [require("nativewind/preset")],
+  theme: { extend: {} },
+  plugins: [],
+};), tsconfig.json ({
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "types": [
+      "node"
+    ],
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "nativewind-env.d.ts"
+  ]
+}
+), src: [api.config (import Constants from "expo-constants";
+import { create, type AxiosRequestConfig, isAxiosError } from "axios";
+import { tokenStorage } from "@/utils/secureStorage";
+import { CustomApiError, ErrorOperationsTypo } from "../types/typos";
+
+const API_URL = Constants.expoConfig?.extra?.apiUrl || "http://localhost:3000";
+// conexion a la bd con un tiempo limite de 10 seg
+const api = create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 10000,
+});
+
+// para requerir algo debemos enviar el token
+api.interceptors.request.use(async (config) => {
+  const token = await tokenStorage.get();
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// para respuestas manejamos errores globales
+api.interceptors.response.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    const normalizedError: CustomApiError = {
+      status: 500,
+      message: "Error al obtener mensaje de la respuesta",
+      isNetworkError: false,
+    };
+    if (isAxiosError<ErrorOperationsTypo>(error)) {
+      if (error.response) {
+        normalizedError.status = error.response.status;
+        normalizedError.message = error.response.data.message;
+      } else if (error.request) {
+        normalizedError.status = 0;
+        normalizedError.message = "no se pudo conectar con el servidor";
+        normalizedError.isNetworkError = true;
+      } else {
+        normalizedError.message = error.message;
+      }
+    }
+    return Promise.reject(normalizedError);
+  },
+);
+
+export const request = async <T>(
+  method: "get" | "post" | "put" | "patch" | "delete",
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig,
+): Promise<T> => {
+  const response = await api.request<T>({ method, url, data, ...config });
+  return response.data;
+};
+
+export default api;
+), useAuthMutation (import { useMutation } from "@tanstack/react-query";
+import { router } from "expo-router";
+import { request } from "@/api/api.config";
+import type { LoginFields, RegisterFields } from "@/schemas/auth.schemas";
+import { useAuthStore } from "@/store/auth.store";
+import type { AuthResponse, OperationResponseTypo } from "@/types/typos";
+
+// mutation para login
+export function useLoginMutation() {
+  const login = useAuthStore((s) => s.login);
+
+  return useMutation({
+    mutationFn: (data: LoginFields) =>
+      request<AuthResponse>("post", "/auth/login", data),
+    // si exito->obtener token e id->dirigir a (app)
+    onSuccess: (data) => {
+      login(data.token, data.userId);
+      router.replace("/(app)");
+    },
+  });
+}
+// pa registrar, solo accion de registro y obtenemos mensaje
+export function useRegisterMutation() {
+  return useMutation({
+    mutationFn: (data: RegisterFields) =>
+      request<OperationResponseTypo>("post", "/auth/register", data),
+  });
+}
+), useProfileMutation (import { request } from "@/api/api.config";
+import type { ProfileUpdateFields } from "@/schemas/profile.schemas";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type {
+  OperationResponseTypo,
+  ReturnResultsTypo,
+  UserForProfile,
+} from "@/types/typos";
+import {useAuthStore} from "@/store/auth.store"
+import { router } from "expo-router";
+
+export const PROFILE_QUERY_KEY = ["profile"] as const;
+
+export function useProfileQuery() {
+  return useQuery({
+    queryKey: PROFILE_QUERY_KEY,
+    queryFn: async () => {
+      const response = await request<ReturnResultsTypo<UserForProfile>>(
+        "get",
+        "/profile/",
+      );
+      return response.data ?? [];
+    },
+  });
+}
+
+export function useUpdateProfileMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: ProfileUpdateFields) =>
+      request<OperationResponseTypo>("put", "/profile/update", data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY }),
+  });
+}
+
+export function useDeleteAccountMutation() {
+    const logout = useAuthStore((s) => s.logout);
+    return useMutation({
+        mutationFn: () => request<OperationResponseTypo>("delete", "/profile/delete"),
+        onSuccess: () => {
+            logout();
+            router.push("/(auth)");
+        },
+    });
+}), useTodoMutation (import { request } from "@/api/api.config";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type {TodoFields} from "@/schemas/todo.schemas"
+import type {
+  ReturnResultsTypo,
+  Todos,
+  OperationResponseTypo,
+} from "@/types/typos";
+
+export const TODOS_QUERY_KEY = ["todos"] as const;
+
+export function useTodosQuery() {
+  return useQuery({
+    queryKey: TODOS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await request<ReturnResultsTypo<Todos[]>>("get", "/todos/");
+      return response.data ?? []
+    },
+  });
+}
+
+export function useCreateTodoMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: TodoFields) =>
+      request<OperationResponseTypo>("post", "/todos/create", data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: TODOS_QUERY_KEY }),
+  });
+}
+
+export function useUpdateTodoMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: TodoFields }) =>
+      request<OperationResponseTypo>("put", `/todos/update/${id}`, data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: TODOS_QUERY_KEY }),
+  });
+}
+
+export function useDeleteTodoMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }: { id: string }) =>
+      request<OperationResponseTypo>("delete", `/todos/delete/${id}`),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: TODOS_QUERY_KEY }),
+  });
+}
+), FormField (import { View, Text, TextInput, type TextInputProps } from "react-native";
+import { Controller, type Control, type FieldValues, type Path } from "react-hook-form";
+
+interface FormFieldProps<T extends FieldValues> extends TextInputProps {
+  control: Control<T>;
+  name: Path<T>;
+  label: string;
+}
+
+export function FormField<T extends FieldValues>({
+  control,
+  name,
+  label,
+  ...inputProps
+}: FormFieldProps<T>) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+        <View className="mb-4">
+          <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
+          <TextInput
+            className={`border rounded-lg px-3 py-2 text-base ${
+              error ? "border-red-500" : "border-gray-300"
+            }`}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            value={value as string}
+            {...inputProps}
+          />
+          {error && <Text className="text-red-500 text-xs mt-1">{error.message}</Text>}
+        </View>
+      )}
+    />
+  );
+}), queryClient (import {QueryClient, QueryCache, MutationCache} from "@tanstack/react-query"
+import { router } from "expo-router"
+import { useAuthStore } from "@/store/auth.store"
+import type { CustomApiError } from "@/types/typos"
+
+// para usar en _layout.tsx (helper para cuando se le haya acabado el tiempo al usuario en la app)
+function handleAuthError(error: unknown) {
+    const err = error as CustomApiError;
+    if (err.status === 401) {
+        useAuthStore.getState().logout();
+        router.replace('/(auth)');
+    }
+}
+// exportamos instancia de QueryClient para cuando haya un error en la obtencion de datos como
+// en la modificacion de cada tabla de la BD se dispare la funcion y redirija al usuario a login page
+export const queryClient = new QueryClient({
+    queryCache: new QueryCache({onError: handleAuthError}),
+    mutationCache: new MutationCache({onError: handleAuthError}),
+});), auth.schemas (import { z } from "zod";
+// esquemas para que el usuario ingrese bien los datos
+export const loginSchema = z.object({
+  email: z.string().email("Correo Invalido"),
+  password: z.string().min(6, "Minimo 6 caracteres"),
+});
+
+export const registerSchema = z.object({
+  userName: z.string().min(1, "Requerido"),
+  email: z.string().email("Correo inválido"),
+  password: z.string().min(6, "Mínimo 6 caracteres"),
+});
+// convertidos a type
+export type LoginFields = z.infer<typeof loginSchema>
+export type RegisterFields = z.infer<typeof registerSchema>), profile.schemas (import { z } from "zod";
+
+const emptyToUndefined = (val: unknown) => (val === "" ? undefined : val);
+
+export const profileUpdateSchema = z.object({
+  userName: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
+  email: z.preprocess(emptyToUndefined, z.string().email("Correo inválido").optional()),
+  password: z.preprocess(emptyToUndefined, z.string().min(6, "Mínimo 6 caracteres").optional()),
+});
+
+export type ProfileUpdateFields = z.infer<typeof profileUpdateSchema>;), todo.schemas (import {z} from "zod"
+
+export const todoSchema = z.object({
+  title: z.string().min(1, "Requerido"),
+  description: z.string().optional(),
+});
+
+export type TodoFields = z.infer<typeof todoSchema>;), auth.store (import { create } from "zustand";
+import { tokenStorage, userIdStorage } from "@/utils/secureStorage";
+import type { AuthStoreHelper } from "@/types/typos";
+// heredamos de AuthStoreHelper para incluir isHydrated y su funcion booleano
+interface AuthStore extends AuthStoreHelper {
+  isHydrated: boolean;
+  hydrate: () => Promise<void>;
+}
+/**
+ * auth store hydrate->recargamos los datos del usuario; login->establecemos los datos que recibimos del
+ * usuario al hacer el rest; logout->borramos datos del usuario; checkauth->chequeamos si el usuario aun
+ * esta logeado
+ */
+export const useAuthStore = create<AuthStore>((set, get) => ({
+  isAutenticated: false,
+  token: null,
+  userId: null,
+  isHydrated: false,
+
+  hydrate: async () => {
+    const [token, userId] = await Promise.all([
+      tokenStorage.get(),
+      userIdStorage.get(),
+    ]);
+    set({
+      token,
+      userId,
+      isAutenticated: Boolean(token && userId),
+      isHydrated: true,
+    });
+  },
+
+  login: (token, userId) => {
+    tokenStorage.set(token);
+    userIdStorage.set(userId);
+    set({ token, userId, isAutenticated: true });
+  },
+
+  logout: () => {
+    tokenStorage.remove();
+    userIdStorage.remove();
+    set({ token: null, userId: null, isAutenticated: false });
+  },
+
+  checkAuth: () => get().isAutenticated,
+}));), typos.ts (export interface CustomApiError {
+  status: number;
+  message: string;
+  isNetworkError: boolean;
+}
+
+export interface AuthResponse {
+  token: string;
+  message: string;
+  userId: string;
+}
+
+export interface UserForProfile {
+  id: string;
+  userName: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReturnResultsTypo<T> {
+  data: T;
+}
+
+export interface OperationResponseTypo {
+  message: string;
+}
+
+export interface ErrorOperationsTypo {
+  error: true;
+  message: string;
+}
+
+export interface AuthStoreHelper {
+  isAutenticated: boolean;
+  token: string | null;
+  userId: string | null;
+  login: (token: string, userId: string) => void;
+  logout: () => void;
+  checkAuth: () => boolean;
+}
+
+export interface Todos {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  title: string | null;
+  description: string | null;
+}
+
+export interface TodoManagement {
+  title?: string;
+  description?: string;
+}
+), secureStorage (import * as SecureStore from "expo-secure-store";
+
+const TOKEN_KEY = process.env["EXPO_PUBLIC_TOKEN_KEY"] ?? "";
+const USER_KEY = process.env["EXPO_PUBLIC_USER_KEY"] ?? "";
+
+export const tokenStorage = {
+  async get(): Promise<string | null> {
+    return await SecureStore.getItemAsync(TOKEN_KEY);
+  },
+  async set(token: string): Promise<void> {
+    await SecureStore.setItemAsync(TOKEN_KEY, token);
+  },
+  async remove(): Promise<void> {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+  },
+};
+
+export const userIdStorage = {
+  async get(): Promise<string | null> {
+    return await SecureStore.getItemAsync(USER_KEY);
+  },
+  async set(userId: string): Promise<void> {
+    await SecureStore.setItemAsync(USER_KEY, userId);
+  },
+  async remove(): Promise<void> {
+    await SecureStore.deleteItemAsync(USER_KEY);
+  },
+};
+)], _layout.tsx (import '../global.css';
+import { useEffect } from 'react';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
+import { useAuthStore } from "@/store/auth.store";
+import { Stack } from "expo-router";
+
+function RootNavigator() {
+  // obtenemos si esta autenticado
+  const isAuthenticated = useAuthStore((s) => s.isAutenticated);
+  // obtenemos si ya ha "rehidratado" la sesion
+  const isHydrated = useAuthStore((s) => s.isHydrated);
+  const hydrate = useAuthStore((s) => s.hydrate);
+  // cuando se renderize la pagina llamamos a hydrate y por deps
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+  // si no ha recargado, retornamos null o un loading screen (aunque prefiriria un mensaje con loading)
+  if (!isHydrated) {
+    return null; // o un splash/loading screen
+  }
+  // retornamos Stack->Stack.Protected que protege cada ruta/page (auth si no esta autenticado)
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="/(app)" />
+      </Stack.Protected>
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="/(auth)" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+// ahora si podemos envolver todo con QueryClientProvider con queryClient configurado y envolviendo
+// las paginas
+export default function RootLayout() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootNavigator />
+    </QueryClientProvider>
+  );
+}), (auth)/index.tsx (import { useState } from "react";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Ionicons } from "@expo/vector-icons";
+import { FormField } from "@/hooks/components/FormField";
+import { loginSchema, registerSchema, type LoginFields, type RegisterFields } from "@/schemas/auth.schemas";
+import { useLoginMutation, useRegisterMutation } from "@/hooks/useAuthMutations";
+import type { CustomApiError } from "@/types/typos";
+
+export default function AuthScreen() {
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const isLogin = mode === "login";
+
+  const loginForm = useForm<LoginFields>({ resolver: zodResolver(loginSchema) });
+  const registerForm = useForm<RegisterFields>({ resolver: zodResolver(registerSchema) });
+
+  const loginMutation = useLoginMutation();
+  const registerMutation = useRegisterMutation();
+
+  const onSubmitLogin = loginForm.handleSubmit((data) => loginMutation.mutate(data));
+  const onSubmitRegister = registerForm.handleSubmit((data) =>
+    registerMutation.mutate(data, { onSuccess: () => setMode("login") }),
+  );
+
+  const activeError = (isLogin ? loginMutation.error : registerMutation.error) as
+    | CustomApiError
+    | null;
+  const isPending = isLogin ? loginMutation.isPending : registerMutation.isPending;
+
+  return (
+    <View className="flex-1 justify-center px-6 bg-white">
+      <View className="items-center mb-8">
+        <Ionicons name="checkbox-outline" size={48} color="#3b82f6" />
+        <Text className="text-2xl font-bold mt-2">{isLogin ? "Iniciar sesión" : "Crear cuenta"}</Text>
+      </View>
+
+      {isLogin ? (
+        <>
+          <FormField control={loginForm.control} name="email" label="Correo" keyboardType="email-address" autoCapitalize="none" />
+          <FormField control={loginForm.control} name="password" label="Contraseña" secureTextEntry />
+        </>
+      ) : (
+        <>
+          <FormField control={registerForm.control} name="userName" label="Usuario" autoCapitalize="none" />
+          <FormField control={registerForm.control} name="email" label="Correo" keyboardType="email-address" autoCapitalize="none" />
+          <FormField control={registerForm.control} name="password" label="Contraseña" secureTextEntry />
+        </>
+      )}
+
+      {activeError && <Text className="text-red-500 text-sm mb-3">{activeError.message}</Text>}
+
+      <Pressable
+        onPress={isLogin ? onSubmitLogin : onSubmitRegister}
+        disabled={isPending}
+        className="bg-blue-500 rounded-lg py-3 items-center mb-4"
+      >
+        {isPending ? <ActivityIndicator color="white" /> : (
+          <Text className="text-white font-semibold">{isLogin ? "Entrar" : "Registrarme"}</Text>
+        )}
+      </Pressable>
+
+      <Pressable onPress={() => setMode(isLogin ? "register" : "login")}>
+        <Text className="text-center text-blue-500">
+          {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
+        </Text>
+      </Pressable>
+    </View>
+  );
+}), (app)/index.tsx (import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Ionicons } from "@expo/vector-icons";
+import { FormField } from "@/hooks/components/FormField";
+import { todoSchema, type TodoFields } from "@/schemas/todo.schemas";
+import {
+  useTodosQuery,
+  useCreateTodoMutation,
+  useDeleteTodoMutation,
+} from "@/hooks/useTodoMutation";
+import { useAuthStore } from "@/store/auth.store";
+import { router } from "expo-router";
+import type { CustomApiError, Todos } from "@/types/typos";
+
+export default function TodosScreen() {
+  const { data: todos, isLoading, isRefetching, refetch } = useTodosQuery();
+  const createMutation = useCreateTodoMutation();
+  const deleteMutation = useDeleteTodoMutation();
+  const logout = useAuthStore((s) => s.logout);
+  const { control, handleSubmit, reset } = useForm<TodoFields>({
+    resolver: zodResolver(todoSchema),
+    defaultValues: { title: "", description: "" },
+  });
+  const handleLogout = () => {
+    logout();
+    router.replace("/(auth)");
+  };
+
+  const onSubmit = handleSubmit((data) => {
+    createMutation.mutate(data, { onSuccess: () => reset() });
+  });
+
+  const renderItem = ({ item }: { item: Todos }) => (
+    <View className="flex-row items-center justify-between bg-gray-50 rounded-lg px-4 py-3 mb-2">
+      <View className="flex-1 mr-2">
+        <Text className="text-base font-semibold">{item.title}</Text>
+        {item.description ? (
+          <Text className="text-gray-500 text-sm">{item.description}</Text>
+        ) : null}
+      </View>
+      <Pressable onPress={() => deleteMutation.mutate({ id: item.id })}>
+        <Ionicons name="trash-outline" size={22} color="#ef4444" />
+      </Pressable>
+    </View>
+  );
+
+  return (
+    <View className="flex-1 bg-white px-4 pt-14">
+      <View className="flex-row items-center justify-between mb-4">
+        <Text className="text-2xl font-bold">Mis tareas</Text>
+        <Pressable onPress={() => router.push("/(app)/profile")}>
+          <Ionicons name="person-circle-outline" size={26} color="#374151" />
+        </Pressable>
+        <Pressable onPress={handleLogout}>
+          <Ionicons name="log-out-outline" size={26} color="#374151" />
+        </Pressable>
+      </View>
+
+      <View className="mb-4">
+        <FormField
+          control={control}
+          name="title"
+          label="Nueva tarea"
+          placeholder="Título"
+        />
+        <FormField
+          control={control}
+          name="description"
+          label="Descripción (opcional)"
+        />
+        <Pressable
+          onPress={onSubmit}
+          disabled={createMutation.isPending}
+          className="bg-blue-500 rounded-lg py-2 items-center"
+        >
+          {createMutation.isPending ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text className="text-white font-semibold">Agregar</Text>
+          )}
+          {createMutation.error && (
+            <Text className="text-red-500 text-sm mb-2">
+              {(createMutation.error as unknown as CustomApiError).message}
+            </Text>
+          )}
+        </Pressable>
+      </View>
+
+      {isLoading ? (
+        <ActivityIndicator className="mt-8" />
+      ) : (
+        <FlatList
+          data={todos}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
+          ListEmptyComponent={
+            <Text className="text-center text-gray-400 mt-8">
+              No tienes tareas aún
+            </Text>
+          }
+        />
+      )}
+    </View>
+  );
+}
+), (app)/profile.tsx (import { useEffect } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+} from "react-native";
+import { useForm, type Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Ionicons } from "@expo/vector-icons";
+import { FormField } from "@/hooks/components/FormField";
+import {
+  profileUpdateSchema,
+  type ProfileUpdateFields,
+} from "@/schemas/profile.schemas";
+import {
+  useProfileQuery,
+  useUpdateProfileMutation,
+  useDeleteAccountMutation,
+} from "@/hooks/useProfileMutation";
+import type {CustomApiError} from "@/types/typos"
+
+export default function ProfileScreen() {
+  const { data: profile, isLoading } = useProfileQuery();
+  const updateMutation = useUpdateProfileMutation();
+  const deleteMutation = useDeleteAccountMutation();
+
+  const profileResolver: Resolver<ProfileUpdateFields> =
+    zodResolver(profileUpdateSchema as any);
+
+  const { control, handleSubmit, reset } = useForm<ProfileUpdateFields>({
+    resolver: profileResolver,
+    defaultValues: { userName: "", email: "", password: "" },
+  });
+
+  // precarga el form una vez que llegan los datos reales del perfil
+  useEffect(() => {
+    if (profile) {
+      reset({ userName: profile.userName, email: profile.email, password: "" });
+    }
+  }, [profile, reset]);
+
+  const onSubmit = handleSubmit((data) => updateMutation.mutate(data));
+
+  const confirmDelete = () => {
+    Alert.alert(
+      "Eliminar cuenta",
+      "Esta acción no se puede deshacer. ¿Seguro que quieres continuar?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Eliminar", style: "destructive", onPress: () => deleteMutation.mutate() },
+      ],
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView className="flex-1 bg-white px-4 pt-14">
+      <Text className="text-2xl font-bold mb-6">Mi perfil</Text>
+
+      <FormField control={control} name="userName" label="Usuario" autoCapitalize="none" />
+      <FormField control={control} name="email" label="Correo" keyboardType="email-address" autoCapitalize="none" />
+      <FormField control={control} name="password" label="Nueva contraseña (opcional)" secureTextEntry />
+
+      {updateMutation.error && (
+        <Text className="text-red-500 text-sm mb-3">
+          {((updateMutation.error as unknown) as CustomApiError).message}
+        </Text>
+      )}
+      {updateMutation.isSuccess && (
+        <Text className="text-green-600 text-sm mb-3">Perfil actualizado</Text>
+      )}
+
+      <Pressable
+        onPress={onSubmit}
+        disabled={updateMutation.isPending}
+        className="bg-blue-500 rounded-lg py-3 items-center mb-4"
+      >
+        {updateMutation.isPending ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text className="text-white font-semibold">Guardar cambios</Text>
+        )}
+      </Pressable>
+
+      <Pressable
+        onPress={confirmDelete}
+        disabled={deleteMutation.isPending}
+        className="border border-red-500 rounded-lg py-3 items-center flex-row justify-center gap-2"
+      >
+        <Ionicons name="trash-outline" size={18} color="#ef4444" />
+        <Text className="text-red-500 font-semibold">Eliminar cuenta</Text>
+      </Pressable>
+    </ScrollView>
+  );
+}
+)]

@@ -11,7 +11,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Ionicons } from "@expo/vector-icons";
 import { FormField } from "@/hooks/components/FormField";
 import { todoSchema, type TodoFields } from "@/schemas/todo.schemas";
-import { useTodosQuery, useCreateTodoMutation } from "@/hooks/useTodoMutation";
+import {
+  useTodosQuery,
+  useCreateTodoMutation,
+  useDeleteTodoMutation,
+} from "@/hooks/useTodoMutation";
 import { useAuthStore } from "@/store/auth.store";
 import { router } from "expo-router";
 import type { CustomApiError, Todos } from "@/types/typos";
@@ -19,6 +23,7 @@ import type { CustomApiError, Todos } from "@/types/typos";
 export default function TodosScreen() {
   const { data: todos, isLoading, isRefetching, refetch } = useTodosQuery();
   const createMutation = useCreateTodoMutation();
+  const deleteMutation = useDeleteTodoMutation();
   const logout = useAuthStore((s) => s.logout);
   const { control, handleSubmit, reset } = useForm<TodoFields>({
     resolver: zodResolver(todoSchema),
@@ -41,9 +46,9 @@ export default function TodosScreen() {
           <Text className="text-gray-500 text-sm">{item.description}</Text>
         ) : null}
       </View>
-      {/* <Pressable onPress={() => deleteMutation.mutate(item.id)}>
+      <Pressable onPress={() => deleteMutation.mutate({ id: item.id })}>
         <Ionicons name="trash-outline" size={22} color="#ef4444" />
-      </Pressable> */}
+      </Pressable>
     </View>
   );
 
@@ -51,6 +56,9 @@ export default function TodosScreen() {
     <View className="flex-1 bg-white px-4 pt-14">
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-2xl font-bold">Mis tareas</Text>
+        <Pressable onPress={() => router.push("/(app)/profile")}>
+          <Ionicons name="person-circle-outline" size={26} color="#374151" />
+        </Pressable>
         <Pressable onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={26} color="#374151" />
         </Pressable>
@@ -80,7 +88,7 @@ export default function TodosScreen() {
           )}
           {createMutation.error && (
             <Text className="text-red-500 text-sm mb-2">
-              {((createMutation.error as unknown) as CustomApiError).message}
+              {(createMutation.error as unknown as CustomApiError).message}
             </Text>
           )}
         </Pressable>

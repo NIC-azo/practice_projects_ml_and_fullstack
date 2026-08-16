@@ -12,6 +12,7 @@ class ProfileRoute {
     private routesConfigurated(): void {
         this.router.use(authMiddleware)
         this.router.get('/health', () => console.log("profile route funcionando correctamente"));
+        this.router.get('/', UsersController.profileUser);
         this.router.put('/update', UsersController.updateUser);
         this.router.delete('/delete', UsersController.deleteUser);
         this.router.get('/profile', UsersController.profileUser);

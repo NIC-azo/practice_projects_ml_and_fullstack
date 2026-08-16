@@ -1,8 +1,8 @@
 import { request } from "@/api/api.config";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type {TodoFields} from "@/schemas/todo.schemas"
 import type {
   ReturnResultsTypo,
-  TodoManagement,
   Todos,
   OperationResponseTypo,
 } from "@/types/typos";
@@ -12,15 +12,17 @@ export const TODOS_QUERY_KEY = ["todos"] as const;
 export function useTodosQuery() {
   return useQuery({
     queryKey: TODOS_QUERY_KEY,
-    queryFn: async () =>
-      (await request<ReturnResultsTypo<Todos[]>>("get", "/todos/")).data,
+    queryFn: async () => {
+      const response = await request<ReturnResultsTypo<Todos[]>>("get", "/todos/");
+      return response.data ?? []
+    },
   });
 }
 
 export function useCreateTodoMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: TodoManagement) =>
+    mutationFn: (data: TodoFields) =>
       request<OperationResponseTypo>("post", "/todos/create", data),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: TODOS_QUERY_KEY }),
@@ -30,7 +32,7 @@ export function useCreateTodoMutation() {
 export function useUpdateTodoMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TodoManagement }) =>
+    mutationFn: ({ id, data }: { id: string; data: TodoFields }) =>
       request<OperationResponseTypo>("put", `/todos/update/${id}`, data),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: TODOS_QUERY_KEY }),
