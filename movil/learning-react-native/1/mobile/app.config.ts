@@ -17,6 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   ios: { supportsTablet: true },
   android: {
+    package: "com.nicolas.todolistapp",
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#ffffff",
@@ -27,5 +28,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: ["expo-router", "expo-secure-store"],
   extra: {
     apiUrl: process.env["EXPO_PUBLIC_API_URL"],
+    eas: {
+      projectId: "39631200-6fbd-47e1-a2bf-2be73a2db40d",
+    }
   },
 });
